@@ -1,0 +1,12 @@
+{% if is_granted('ROLE_USER') %}
+    <div>
+        <a href="#"><img src="" alt="" class="border-circle" id="crianca-ativa"></a>
+        <div class="btn-group-vertical" role="group" aria-label="Minhas crianças" id="crianca-menu">
+            {% for c in array %}
+                <a href="#" class="crianca-opcao"><img src="" alt="" class="border-circle {% if c.foto == c_foto_ativa %}border border-5 border-danger{% endif %}">{{ c.nome }}</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{{ encore_entry_script_tags('selecionar_crianca') }}

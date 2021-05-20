@@ -1,0 +1,38 @@
+{% block body %}
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <button class="btn btn-success border-round btn-block" type="button" id="acao">Iniciar</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="btn-group" role="group" aria-label="Grupo Lado">
+                <button class="btn btn-outline-primary" data-bs-toggle="button" autocomplete="off">E</button>
+                <button class="btn btn-outline-primary" data-bs-toggle="button" autocomplete="off">D</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-none" id="progresso">
+        <div class="col">
+            <div class="row">
+                <div class="col-2">
+                    <div class="spinner-grow" role="status">
+                        <span class="visually-hidden">Registrando...</span>
+                    </div>
+                </div>
+                <div class="col">Registrando...</div>
+            </div>
+            <div class="row">
+                <div class="col-8 mx-auto">
+                    <button class="btn btn-primary btn-block" type="button" id="fim" data-end="{{ path('amamentacao_post') }}">Finalizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('amamentacao') }}
+{% endblock javascripts %}

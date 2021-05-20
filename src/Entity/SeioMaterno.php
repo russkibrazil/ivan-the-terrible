@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SeioMaternoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SeioMaternoRepository::class)
@@ -19,22 +20,27 @@ class SeioMaterno
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank
      */
     private $dhInicio;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank
      */
     private $dhFim;
 
     /**
      * @ORM\Column(type="string", length=1)
+     * @Assert\NotBlank
+     * @Assert\Choice(choices={"E","D"}, message="Utilize a inicial capital do lado (Esquerdo/Direito)")
      */
     private $lado;
 
     /**
      * @ORM\ManyToOne(targetEntity=Crianca::class)
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank
      */
     private $crianca;
 

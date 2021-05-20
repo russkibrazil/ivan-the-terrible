@@ -1,0 +1,23 @@
+{% block body %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.refeicao, {'attr': {'placeholder': form.refeicao.vars.label}}) }}
+                {{ form_label(form.refeicao) }}
+            </div>
+
+            <div>
+                <p class="h4">Sugestões</p>
+                <button>Minha sugestão</button>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.volume, {'attr': {'placeholder': form.volume.vars.label}}) }}
+                {{ form_label(form.volume) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock body %}
