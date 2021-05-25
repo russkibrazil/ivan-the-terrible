@@ -1,0 +1,37 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Incuir criança{% endblock title %}
+
+{% block body %}
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    {{ form_widget(form.nome, {'attr': {'placeholder': form.nome.vars.label}}) }}
+                    {{ form_label(form.nome) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-floating mb-3">
+                    {{ form_widget(form.dn, {'attr': {'placeholder': form.dn.vars.label}}) }}
+                    {{ form_label(form.dn) }}
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating mb-3">
+                    {{ form_widget(form.parentesco, {'attr': {'placeholder': form.parentesco.vars.label}}) }}
+                    {{ form_label(form.parentesco) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                {{ form_widget(form.foto) }}
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock body %}

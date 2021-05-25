@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Registros{% endblock title %}
+
+{% block body %}
+    <h1>Entradas recentes</h1>
+    <table class="table table-striped">
+        <tbody>
+            {% for row in entradas %}
+            <tr>
+                <td></td>
+                <td>{{ row.volume }}</td>
+                {#
+                    Comida Sólida = <i class="ri-restaurant-line"></i>
+                    Bebida = <i class="ri-cup-line"></i>
+                    Amamentação = <i class="ri-hearts-line"></i>
+                #}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">
+                    <p>Não há registros para esta criança</p>
+                    <button type="button">Incluir</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Relatórios</h1>
+    <table class="table table-striped">
+        <tbody>
+            {% for row in relatorios %}
+                <tr>
+                    <td><a href="#"><i class="ri-file-pdf-line"></i></a></td>
+                    <td>{{ row.dh }}</td>
+                    <td>{{ row.dInicio }} - {{ row.dFim }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">
+                        Não há relatórios para esta criança
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock body %}

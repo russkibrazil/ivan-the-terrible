@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Minhas crianças{% endblock %}
+
+{% block body %}
+    {% for row in criancas %}
+        <div class="row">
+            <div class="col-3">
+                <img src="{{ row.foto }}" alt="" class="border-circle" style="height: inherit;">
+            </div>
+            <div class="col">
+                <p>{{ row.nome }}</p>
+                <p>{{ row.dn }}</p>
+            </div>
+            <div class="col-2">
+                <a href="{{ path('crianca_registros') }}" class="btn btn-primary">Registros</a>
+                <a href="#" class="btn btn-primary">Requerir</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

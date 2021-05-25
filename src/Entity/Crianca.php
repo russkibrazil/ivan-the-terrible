@@ -6,6 +6,7 @@ use App\Repository\CriancaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CriancaRepository::class)
@@ -21,11 +22,14 @@ class Crianca
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=100, minMessage="Digite no mínimo o primeiro nome", maxMessage="Nome muito extenso")
      */
     private $nome;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank
      */
     private $dn;
 
