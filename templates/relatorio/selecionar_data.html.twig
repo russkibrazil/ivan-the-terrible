@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Selecionar data{{ razao|default(' para pesquisa') }}{% endblock title %}
+
+{% block body %}
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col">
+                <div class="form-floating mb-3">
+                    {{ form_widget(form.dataInicio, {'attr': {'placeholder': form.dataInicio.vars.label}}) }}
+                    {{ form_label(form.dataInicio) }}
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating mb-3">
+                    {{ form_widget(form.dataFim, {'attr': {'placeholder': form.dataFim.vars.label}}) }}
+                    {{ form_label(form.dataFim) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Pesquisar</button>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock body %}

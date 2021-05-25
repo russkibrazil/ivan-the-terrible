@@ -1,0 +1,70 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Relatórios candidatos{% endblock title %}
+
+{% block body %}
+    <span data-access="{{ path('relatorio_acesso') }}"></span>
+    {% if exact is not empty %}
+        <div class="row">
+            <div class="col">
+                <h2>Resultados exatos</h2>
+                <p>Os seguintes relatórios têm as mesmas configurações ou contém o intervalo de tempo que você requeriu.</p>
+
+                {% for row in exact %}
+                   {{ _self.lista_relatorio(row) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if oneHit is not empty %}
+        <div class="row">
+            <div class="col">
+                <h2>Resultados parcialmente inclusos</h2>
+                <p>Os seguintes relatórios incluem uma das datas que você forneceu.</p>
+
+                {% for row in oneHit %}
+                    {{ _self.lista_relatorio(row) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if period is not empty %}
+        <div class="row">
+            <div class="col">
+                <h2>Resultados com Períodos similares</h2>
+                <p>Os seguintes relatórios têm o intervalo de tempo entre as datas similar ao perído que vocẽ ofereceu, limitados aos últimos 12 resultados.</p>
+
+                {% for row in exact %}
+                    {{ _self.lista_relatorio(row) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if exact is empty %}
+        <div class="row">
+            <div class="col mx-auto">
+                <button class="btn btn-primary" data-link="{{ path('relatorio_forcar_requisicao') }}">Requerir mesmo assim</button>
+            </div>
+        </div>
+    {% endif %}
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('sRelatorio') }}
+{% endblock javascripts %}
+
+{% macro lista_relatorio(row) %}
+    <div class="row">
+        <div class="col-1">{# icone #}</div>
+        <div class="col">
+            {{ row.dInicio }} - {{ row.dFim }}
+        </div>
+        <div class="col mx-auto">
+            <button class="btn btn-primary rqr-btn" data-id="{{ row.id }}">Requisitar acesso</button>
+        </div>
+    </div>
+{% endmacro %}
