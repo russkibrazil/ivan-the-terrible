@@ -77,7 +77,7 @@ class AlimentacaoController extends AbstractController
             {
                 $log->setDhFim(new DateTime($item['dhFim']));
             }
-            catch (Exception) {
+            catch (Exception $e) {
                 $log->setDhFim(new DateTime('now'));
             }
             if ($item['crianca'] != $ultimaCrianca)
