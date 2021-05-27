@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Alterar minha senha{% endblock title %}
+
+{% block body %}
+
+{{ form_start(form) }}
+    <div class="row">
+        <div class="col">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.senha, {'attr': {'placeholder': form.senha.vars.label}}) }}
+                {{ form_label(form.senha) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.novaSenha.first, {'attr': {'placeholder': form.novaSenha.first.vars.label}}) }}
+                {{ form_label(form.novaSenha.first) }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.novaSenha.second, {'attr': {'placeholder': form.novaSenha.second.vars.label}}) }}
+                {{ form_label(form.novaSenha.second) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col mx-auto">
+            <button type="submit" class="btn btn-primary">Alterar Senha</button>
+            <a href="{{ path('pessoa_perfil') }}" class="btn btn-primary">Manter senha atual</a>
+        </div>
+    </div>
+{{ form_end(form) }}
+
+{% endblock body %}

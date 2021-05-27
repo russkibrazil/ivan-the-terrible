@@ -6,36 +6,45 @@ use App\Repository\UsuarioRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UsuarioRepository::class)
+ * @UniqueEntity("email")
  */
-class Usuario
+class Usuario implements UserInterface
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, unique=true)
+     * @Assert\Email(message = "Use um endereço de e-mail válido")
+     * @Assert\NotBlank
+     * @Assert\Length(max=100, maxMessage="Utilize um endereço de e-mail mais curto")
+     * @Groups({"busca_usuario"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=180)
+     * @Assert\NotBlank
+     * @Assert\Length(max=180, maxMessage="Utilize uma senha mais curta")
      */
     private $senha;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\Length(min=10, max=100, minMessage="Digite nome e sobrenome", maxMessage="Nome muito longo")
+     * @Assert\NotBlank
+     * @Groups({"busca_usuario"})
      */
-    private $Nome;
+    private $nome;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"busca_usuario"})
      */
     private $foto;
 
@@ -54,14 +63,14 @@ class Usuario
      */
     private $registroMedico;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $roles = [];
+
     public function __construct()
     {
         $this->criancaVinculos = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getEmail(): ?string
@@ -90,12 +99,12 @@ class Usuario
 
     public function getNome(): ?string
     {
-        return $this->Nome;
+        return $this->nome;
     }
 
-    public function setNome(string $Nome): self
+    public function setNome(string $nome): self
     {
-        $this->Nome = $Nome;
+        $this->nome = $nome;
 
         return $this;
     }
@@ -169,5 +178,33 @@ class Usuario
         $this->registroMedico = $registroMedico;
 
         return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(?array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function getPassword()
+    {
+        return $this->senha;
+    }
+    public function getSalt()
+    {
+    }
+    public function eraseCredentials()
+    {
     }
 }

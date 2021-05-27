@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Usuario;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 
 /**
  * @method Usuario|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,126 @@ class UsuarioRepository extends ServiceEntityRepository
         parent::__construct($registry, Usuario::class);
     }
 
-    // /**
-    //  * @return Usuario[] Returns an array of Usuario objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Usuario|null Returns an Usuario object
+     */
+    public function findByNomeAndEmail(string $nome, string $email): ?Usuario
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
+        $q = $this->_em->createQuery("
+            SELECT u
+            FROM App\Entity\Usuario u
+            WHERE nome = :nome AND email LIKE :email
+        ")
+        ->setParameters([
+            'nome' => $nome,
+            'email' => "{$email}%"
+        ])
         ;
+        return $q->getOneOrNullResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Usuario
+    public function excluirUsuario(Usuario $usuario)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (!($this->_em->getRepository(Usuario::class)->find($usuario->getEmail()) instanceof Usuario))
+        {
+            throw new UnsupportedUserException(sprintf('The provided argument to update e-mails is not valid'));
+        }
+
+        $this->_em->createQuery('
+            DELETE App\Entity\Medico l
+            WHERE l.usuario = :antigo
+        ')
+        ->setParameter('antigo', $usuario->getEmail())
+        ->getResult();
+
+        $this->_em->createQuery('
+            DELETE App\Entity\MensagemChat l
+            WHERE l.autor = :antigo OR l.destinatario = :antigo
+        ')
+        ->setParameter('antigo', $usuario->getEmail())
+        ->getResult();
+
+        /**
+         * @var \App\Entity\CriancaVinculo[] $vinculoPais
+         */
+        $vinculoPais = $this->_em->createQuery('
+            SELECT l FROM App\Entity\CriancaVinculo l
+            WHERE l.usuario = :antigo AND (lower(l.parentesco) LIKE "pai" OR lower(l.parentesco) LIKE "m_e")
+        ')
+        ->setParameter('antigo', $usuario->getEmail())
+        ->getResult();
+
+        if (count($vinculoPais) > 0)
+        {
+            $ids = [];
+            /**
+             * @var \App\Entity\CriancaVinculo $row
+             */
+            foreach ($vinculoPais as $row) {
+                $ids[] = $row->getCrianca()->getId();
+            }
+            $ids = implode(",", $ids);
+
+            $this->_em->createQuery('
+            DELETE App\Entity\Mamadeira l
+            WHERE l.crianca IN (:criancas)
+            ')
+            ->setParameters([
+                'criancas' => $ids,
+            ])
+            ->getResult();
+
+            $this->_em->createQuery('
+            DELETE App\Entity\RefeicaoSolida l
+            WHERE l.crianca IN (:criancas)
+            ')
+            ->setParameters([
+                'criancas' => $ids,
+            ])
+            ->getResult();
+
+            $this->_em->createQuery('
+            DELETE App\Entity\SeioMaterno l
+            WHERE l.crianca IN (:criancas)
+            ')
+            ->setParameters([
+                'criancas' => $ids,
+            ])
+            ->getResult();
+
+            $this->_em->createQuery('
+            DELETE App\Entity\Relatorio l
+            WHERE l.crianca IN (:criancas)
+            ')
+            ->setParameters([
+                'criancas' => $ids,
+            ])
+            ->getResult();
+
+            $this->_em->createQuery('
+            DELETE App\Entity\Crianca l
+            WHERE l.id IN (:criancas)
+            ')
+            ->setParameters([
+                'criancas' => $ids,
+            ])
+            ->getResult();
+        }
+
+        // TODO Encontrar autorizações em nome desse usuário e também removê-las, caso não foi pai/mãe
+
+        $this->_em->createQuery('
+            DELETE App\Entity\CriancaVinculo l
+            WHERE l.usuario = :antigo
+        ')
+        ->setParameter('antigo', $usuario->getEmail())
+        ->getResult();
+
+        $this->_em->createQuery('
+        DELETE App\Entity\Usuario l
+        WHERE l.email = :antigo
+        ')
+        ->setParameter('antigo', $usuario->getEmail())
+        ->getResult();
     }
-    */
 }

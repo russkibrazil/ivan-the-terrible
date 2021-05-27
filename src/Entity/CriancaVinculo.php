@@ -15,18 +15,13 @@ class CriancaVinculo
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="criancaVinculos")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(referencedColumnName="email", nullable=false)
      */
     private $usuario;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Crianca::class, inversedBy="criancaVinculos")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -40,11 +35,6 @@ class CriancaVinculo
      *      maxMessage="Defina o parentesco usando no máximo {{ limit }} caracteres")
      */
     private $parentesco;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getUsuario(): ?Usuario
     {

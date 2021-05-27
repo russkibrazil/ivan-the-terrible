@@ -1,0 +1,64 @@
+{% extends "base.html.twig" %}
+
+{# TODO Incluir Vich #}
+
+{% block title %}Vincular pessoas à criança{% endblock title %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col">
+        <input type="text" name="busca" id="busca_input">
+        <button class="btn btn-primary" data-link="{{ path('pessoa_buscar_ajax') }}">Buscar</button>
+    </div>
+</div>
+
+<span data-link="{{ path('pessoa_vincular_novo_ajax') }}"></span>
+
+<div class="row">
+    <div class="col-md">
+            <img src="" alt="" class="border-circle">
+            <p>{{ c.nome }}</p>
+            <p>{{ c.email }}</p>
+    </div>
+    <div class="col-md">
+        <div class="row">
+            <div class="col mx-auto">
+                <button class="btn btn-primary btn-link">Vincular</button>
+            </div>
+            <div class="col mx-auto">
+                <button class="btn btn-danger btn-dismiss">Não conheço</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="parentescoModal" tabindex="-1" aria-labelledby="labelParentescoModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="labelParentescoModal">Parentesco do vínculo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-floating">
+                <p>Digite o parentesco de <span id="nomeUsuario"></span> com a criança</p>
+                <input type="text" name="parentesco" id="txtParentesco" placeholder="Parentesco">
+                <label for="txtParentesco">Parentesco</label>
+            </div>
+            <span data-e=""></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary">Vincular</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('vinculo_pessoa') }}
+{% endblock javascripts %}

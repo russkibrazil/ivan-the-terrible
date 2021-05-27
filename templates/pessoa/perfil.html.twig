@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{# TODO Incluir Vich #}
+
+{% block title %}Meu perfil{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-3">
+        <h1 class="h3">Olá, {{ user.nome }}</h1>
+    </div>
+    <div class="col-md mx-auto">
+        <img src="" alt="" class="border-circle">
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col">
+        <h1>Informações de acesso</h1>
+        <p>Meu e-mail: {{ user.email }}</p>
+        <a href="{{ path('pessoa_alterar_senha') }}" class="btn btn-secondary">Alterar senha</a>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col">
+        <h1>Meus vínculos</h1>
+    </div>
+    {% for row in vinculos %}
+    <div class="row mb-2">
+        <div class="col-2">
+            <img src="" alt="" class="border-circle">
+        </div>
+        <div class="col">
+            <p>{{ row.crianca.nome }}</p>
+        </div>
+        <div class="col-3">
+            <p>{{ row.parentesco }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<hr>
+<div class="row">
+    <div class="col d-lg-none">
+        <a href="{{ path('app_logout') }}" class="btn btn-secondary btn-sm">Finalizar sessão</a>
+    </div>
+    <div class="col">
+        <a href="{{ path('pessoa_apagar_conta')}}" class="btn btn-danger btn-sm">Apagar minha conta</a>
+    </div>
+</div>
+
+{% endblock %}
