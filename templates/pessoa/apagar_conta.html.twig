@@ -16,8 +16,9 @@
 			<div class="alert alert-danger" role="alert">
 				<h2 class="h3"><i class="ri-information-line"></i> Aviso</h2>
 				<p>Este processo não pode ser revertido uma vez iniciado.</p>
-                <p>Este processo apaga permanentemente as informações que você gerou neste serviço que são diretamente vinculadas à você, exceto os arquivos no formato PDF das avaliações (laudos) que você já requeriu.</p>
-                <p>Seu acesso à plataforma será revogado.</p>
+                <p>Este processo apaga permanentemente as informações que você gerou neste serviço que são diretamente vinculadas à você e às crianças as quais você desenvolve papel de pai ou mãe. </p>
+                <p>Os arquivos no formato PDF das avaliações (laudos) que você ou outras pessoas autorizadas requeriram não serão imediatamente apagados, mas também não poderão ser recuperados neste intervalo entre a exclusão dos registros e a exclusão dos arquivos.</p>
+                <p>Seu acesso à plataforma será revogado e suas autorizações removidas das crianças que você tenha cadastrado algum vínculo.</p>
 			</div>
 		</div>
 	</div>
@@ -65,7 +66,7 @@
                 <button type="submit" class="btn btn-danger btn-sm">Confirmar Exclusão</button>
             </div>
             <div class="col">
-                <a href="{{ path('perfil') }}" class="btn btn-secondary btn-lg">Cancelar</a>
+                <a href="{{ path('pessoa_perfil') }}" class="btn btn-secondary btn-lg">Cancelar</a>
             </div>
         </div>
     {{ form_end(form) }}
