@@ -19,13 +19,13 @@ class MensagemChat
 
     /**
      * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(referencedColumnName="email", nullable=false)
      */
     private $autor;
 
     /**
      * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(referencedColumnName="email", nullable=false)
      */
     private $destinatario;
 

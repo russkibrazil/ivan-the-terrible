@@ -39,7 +39,7 @@ class Medico
 
     /**
      * @ORM\OneToOne(targetEntity=Usuario::class, inversedBy="registroMedico", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(referencedColumnName="email", nullable=false)
      */
     private $usuario;
 
