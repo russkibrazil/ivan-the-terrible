@@ -1,0 +1,48 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        pessoa:
+            uri_prefix: /img/pessoa
+            upload_destination: '%kernel.project_dir%/public/img/pessoa'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\SubdirDirectoryNamer
+                options: { chars_per_dir: 3, dirs: 10}
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+
+        crianca:
+            uri_prefix: /img/crianca
+            upload_destination: '%kernel.project_dir%/public/img/crianca'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\SubdirDirectoryNamer
+                options: { chars_per_dir: 3, dirs: 10}
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+
+        crm:
+            uri_prefix: /doc/medico
+            upload_destination: '%kernel.project_dir%/public/doc/medico'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\SubdirDirectoryNamer
+                options: { chars_per_dir: 3, dirs: 10}
+            inject_on_load: false
+            delete_on_update: false
+            delete_on_remove: false
+
+        relatorio:
+            uri_prefix: /doc/relatorio
+            upload_destination: '%kernel.project_dir%/public/doc/relatorio'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\SubdirDirectoryNamer
+                options: { chars_per_dir: 3, dirs: 10}
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: false
+
