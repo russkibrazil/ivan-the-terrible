@@ -126,7 +126,27 @@ class UsuarioRepository extends ServiceEntityRepository
             ->getResult();
         }
 
-        // TODO Encontrar autorizações em nome desse usuário e também removê-las, caso não foi pai/mãe
+        /**
+         * @var \App\Entity\Relatorio[]|null $auths
+         */
+        $auths = $this->_em->createQuery('
+            SELECT r
+            FROM \App\Entity\Relatorio r
+            WHERE (SELECT JSON_SEARCH(r.autorizado,"one", :nome) IS NOT NULL
+        ')
+        ->setParameter('nome', $usuario->getNome())
+        ->getResult();
+
+        /**
+         * @var \App\Entity\Relatorio $row
+         */
+        foreach ($auths as &$row) {
+            $list_auth = $row->getAutorizado();
+            $pos = array_search($usuario, $list_auth);
+            unset($list_auth[$pos]);
+            $row->setAutorizado($list_auth);
+        }
+        $this->_em->flush($auths);
 
         $this->_em->createQuery('
             DELETE App\Entity\CriancaVinculo l
