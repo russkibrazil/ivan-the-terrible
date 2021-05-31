@@ -6,6 +6,6 @@ knp_snappy:
             enable-local-file-access
         ]
     image:
-        enabled:    false
+        enabled:    true #see: https://github.com/symfony/symfony/issues/30059 (Remove unused env vars exception)
         binary:     '%env(WKHTMLTOIMAGE_PATH)%'
         options:    []
