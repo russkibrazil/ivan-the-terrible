@@ -1,7 +1,5 @@
 {% extends "base.html.twig" %}
 
-{# TODO Incluir Vich #}
-
 {% block title %}Vincular pessoas à criança{% endblock title %}
 
 {% block body %}
@@ -17,7 +15,7 @@
 
 <div class="row">
     <div class="col-md">
-            <img src="" alt="" class="border-circle">
+            <img src="{{ vich_uploader_asset(c, 'foto') }}" alt="" class="border-circle">
             <p>{{ c.nome }}</p>
             <p>{{ c.email }}</p>
     </div>

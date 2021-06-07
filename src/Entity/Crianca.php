@@ -6,10 +6,14 @@ use App\Repository\CriancaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=CriancaRepository::class)
+ *
+ * @Vich\Uploadable
  */
 class Crianca
 {
@@ -35,6 +39,14 @@ class Crianca
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $nomeFoto;
+
+    /**
+     * Foto recuperado pelo Vich
+     *
+     * @var File|null
+     * @Vich\UploadableField(maping="crianca", fileNameProperty="nomeFoto")
      */
     private $foto;
 
@@ -77,16 +89,28 @@ class Crianca
         return $this;
     }
 
-    public function getFoto(): ?string
+    public function getNomeFoto(): ?string
     {
-        return $this->foto;
+        return $this->nomeFoto;
     }
 
-    public function setFoto(?string $foto): self
+    public function setNomeFoto(?string $nomeFoto): self
+    {
+        $this->nomeFoto = $nomeFoto;
+
+        return $this;
+    }
+
+    public function setFoto(?File $foto = null): self
     {
         $this->foto = $foto;
 
         return $this;
+    }
+
+    public function getFoto(): ?File
+    {
+        return $this->foto;
     }
 
     /**

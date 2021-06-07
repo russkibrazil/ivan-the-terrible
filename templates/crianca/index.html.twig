@@ -6,7 +6,7 @@
     {% for row in criancas %}
         <div class="row">
             <div class="col-3">
-                <img src="{{ row.foto }}" alt="" class="border-circle" style="height: inherit;">
+                <img src="{{ vich_uploader_asset(row, 'foto') }}" alt="" class="border-circle" style="height: inherit;">
             </div>
             <div class="col">
                 <p>{{ row.nome }}</p>

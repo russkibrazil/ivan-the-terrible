@@ -4,10 +4,14 @@ namespace App\Entity;
 
 use App\Repository\RelatorioRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=RelatorioRepository::class)
+ *
+ * @Vich\Uploadable
  */
 class Relatorio
 {
@@ -51,6 +55,14 @@ class Relatorio
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $nomeArquivo;
+
+    /**
+     * Arquivo recuperado pelo Vich
+     *
+     * @var File|null
+     * @Vich\UploadableField(maping="relatorio", fileNameProperty="nomeArquivo")
+     */
+    private $arquivo;
 
     public function getId(): ?int
     {
@@ -127,5 +139,17 @@ class Relatorio
         $this->nomeArquivo = $nomeArquivo;
 
         return $this;
+    }
+
+    public function setArquivo(?File $arquivo = null): self
+    {
+        $this->arquivo = $arquivo;
+
+        return $this;
+    }
+
+    public function getArquivo(): ?File
+    {
+        return $this->arquivo;
     }
 }

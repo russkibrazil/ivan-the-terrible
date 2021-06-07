@@ -32,7 +32,7 @@
         <tbody>
             {% for row in relatorios %}
                 <tr>
-                    <td><a href="#"><i class="ri-file-pdf-line"></i></a></td>
+                    <td><a href="{{ vich_uploader_asset(row, 'arquivo') }}"><i class="ri-file-pdf-line"></i></a></td>
                     <td>{{ row.dh }}</td>
                     <td>{{ row.dInicio }} - {{ row.dFim }}</td>
                 </tr>

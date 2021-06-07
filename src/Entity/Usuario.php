@@ -6,14 +6,17 @@ use App\Repository\UsuarioRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=UsuarioRepository::class)
  * @UniqueEntity("email")
+ * @Vich\Uploadable
  */
 class Usuario implements UserInterface
 {
@@ -45,6 +48,14 @@ class Usuario implements UserInterface
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"busca_usuario"})
+     */
+    private $nomeFoto;
+
+    /**
+     * Foto recuperado pelo Vich
+     *
+     * @var File|null
+     * @Vich\UploadableField(maping="pessoa", fileNameProperty="nomeFoto")
      */
     private $foto;
 
@@ -109,16 +120,28 @@ class Usuario implements UserInterface
         return $this;
     }
 
-    public function getFoto(): ?string
+    public function getNomeFoto(): ?string
     {
-        return $this->foto;
+        return $this->nomeFoto;
     }
 
-    public function setFoto(?string $foto): self
+    public function setNomeFoto(?string $nomeFoto): self
+    {
+        $this->nomeFoto = $nomeFoto;
+
+        return $this;
+    }
+
+    public function setFoto(?File $foto = null): self
     {
         $this->foto = $foto;
 
         return $this;
+    }
+
+    public function getFoto(): ?File
+    {
+        return $this->foto;
     }
 
     public function getDataCadastro(): ?\DateTimeInterface

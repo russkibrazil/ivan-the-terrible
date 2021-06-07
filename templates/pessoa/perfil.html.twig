@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-{# TODO Incluir Vich #}
 
 {% block title %}Meu perfil{% endblock %}
 
@@ -9,7 +8,8 @@
         <h1 class="h3">Olá, {{ user.nome }}</h1>
     </div>
     <div class="col-md mx-auto">
-        <img src="" alt="" class="border-circle">
+        <img src="{{ vich_uploader_asset(user, 'foto') }}" alt="" class="border-circle">
+        <button class="btn btn-primary">Alterar</button>
     </div>
 </div>
 
