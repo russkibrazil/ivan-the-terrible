@@ -60,7 +60,7 @@ class Relatorio
      * Arquivo recuperado pelo Vich
      *
      * @var File|null
-     * @Vich\UploadableField(maping="relatorio", fileNameProperty="nomeArquivo")
+     * @Vich\UploadableField(mapping="relatorio", fileNameProperty="nomeArquivo")
      */
     private $arquivo;
 

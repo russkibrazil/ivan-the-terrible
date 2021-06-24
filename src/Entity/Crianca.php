@@ -46,7 +46,7 @@ class Crianca
      * Foto recuperado pelo Vich
      *
      * @var File|null
-     * @Vich\UploadableField(maping="crianca", fileNameProperty="nomeFoto")
+     * @Vich\UploadableField(mapping="crianca", fileNameProperty="nomeFoto")
      */
     private $foto;
 

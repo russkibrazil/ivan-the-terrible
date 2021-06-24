@@ -55,7 +55,7 @@ class Usuario implements UserInterface
      * Foto recuperado pelo Vich
      *
      * @var File|null
-     * @Vich\UploadableField(maping="pessoa", fileNameProperty="nomeFoto")
+     * @Vich\UploadableField(mapping="pessoa", fileNameProperty="nomeFoto")
      */
     private $foto;
 
