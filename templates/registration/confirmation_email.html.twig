@@ -1,0 +1,11 @@
+<h1>Vamos confirmar seu cadastro!</h1>
+
+<p>
+    Confirme sua conta e seu e-mail visitando o site abaixo: <br><br>
+    <a href="{{ signedUrl|raw }}">Clique e confirme sua conta</a>.
+    Este link vale por {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+</p>
+
+<p>
+    Até lá!
+</p>

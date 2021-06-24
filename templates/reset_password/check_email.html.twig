@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}E-mail de recuperação enviado{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <p>
+                Se houver uma conta com o endereço de e-mail fornecido, então um e-mail acabou de ser enviado contendo um link para que você possa recuperar sua conta.
+                Este link expira em {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            </p>
+            <p>Se você não conseguiu encontrar a mensagem, verifique o endereço digitado, a caixa de spam ou <a href="{{ path('app_forgot_password_request') }}">tente novamente</a>.</p>
+        </div>
+    </div>
+{% endblock %}

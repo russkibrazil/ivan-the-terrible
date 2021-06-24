@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Redefinir sua senha{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <h1>Redefinir sua senha</h1>
+        </div>
+    </div>
+
+    {{ form_start(resetForm) }}
+    <div class="row">
+
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(resetForm.plainPassword.first, {'attr': {'placeholder': resetForm.plainPassword.first.vars.label}}) }}
+                {{ form_label(resetForm.plainPassword.first) }}
+            </div>
+        </div>
+
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(resetForm.plainPassword.second, {'attr': {'placeholder': registrationFom.plainPassword.second.vars.label}}) }}
+                {{ form_label(resetForm.plainPassword.second) }}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary">Redefinir senha</button>
+        </div>
+    </div>
+    {{ form_end(resetForm) }}
+{% endblock %}

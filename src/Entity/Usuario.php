@@ -79,6 +79,11 @@ class Usuario implements UserInterface
      */
     private $roles = [];
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
+
     public function __construct()
     {
         $this->criancaVinculos = new ArrayCollection();
@@ -229,5 +234,17 @@ class Usuario implements UserInterface
     }
     public function eraseCredentials()
     {
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
     }
 }
