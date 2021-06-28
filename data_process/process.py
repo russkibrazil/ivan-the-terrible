@@ -3,7 +3,7 @@ import pandas
 import numpy
 import matplotlib.pyplot as mpl
 import mysql.connector
-
+import nltk
 
 def estimador_amamentacao_AMEX(dhInicio, dhFim, idade, dh) -> float:
     x = dh - date.fromisoformat(idade)
@@ -27,6 +27,7 @@ def processar_mamadeira():
 def processar_alimentcao_solida():
     pass
 
+nltk.download('punkt')
 conx = mysql.connector.connect(host='127.0.0.1', port='3306', user=user, password=pw, database=db)
 cursor = conx.cursor(buffered=True)
 query = ("""SELECT *
@@ -105,10 +106,15 @@ if nSeio > 0:
         resultados_estimadores['hora'] = resultados_estimadores['dh'].dt.time
         resultados_estimadores.drop('dh',1)
         resultados_estimadores.groupby('data').agg({'volume': numpy.average})
+
+        mpl.figure()
         resultados_estimadores.plot(x='data', y='volume', kind='bar', use_index=False)
+        mpl.savefig('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/testA.png')
     else:
         if amex==False:
+            mpl.figure()
             estimativa_diaria.plot(kind='bar')
+            mpl.savefig('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/testA.png')
         else:
             pass
     media_por_mamada_seio = ((estimativa_diaria-volume_mamadeira_somado) / qtd_mamadas['dh']).repeat(qtd_mamadas['dhInicio'].array) #comparar em gráfico de barras empilhadas os dois tipos de leite, invés da barra somatório
@@ -120,8 +126,10 @@ if nSeio > 0:
     leiteMaterno_mesclado['hora'] = leiteMaterno_mesclado['hora'].str.replace(':','', regex=False)
     leiteMaterno_mesclado['hora'] = leiteMaterno_mesclado['hora'].str.slice(stop=4)
     leiteMaterno_mesclado['hora'] = pandas.Series(leiteMaterno_mesclado['hora'], dtype='int')
+
+    mpl.figure()
     leiteMaterno_mesclado.plot.scatter(x='hora', y='volume', use_index=False)
-     #invocar o matplotlib para salvar as imagens
+    mpl.savefig('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/testB.png')
 
 if nMamadeira > 0:
     #retirar resultados contendo leite materno
@@ -170,16 +178,39 @@ if nMamadeira > 0:
             dados = dados.append(pandas.DataFrame(arr_dados_ausentes, columns=dados.columns), ignore_index=True)
             dados = dados.sort_values(by=['data'])
         dados['data'] = pandas.Series([x for x in range(len(diferentes_datas))])
-        ax.bar(dados['data'], dados['volume'], width=0.5, bottom=y_offset, label=tipo)
+        ax.bar(dados['data'], dados['volume'], width=0.5, bottom=y_offset, label=tipo) #TODO: Criar switch
         y_offset = y_offset + dados['volume']
 
     ax.legend()
     ax.set_ylabel('Volume, ml')
     ax.set_xlabel('Data')
+    mpl.savefig('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/testC.png')
     mpl.xticks(numpy.arange(0,len(diferentes_datas)), ticks.dt.date, rotation=90)
     mpl.draw()
     #imprimir as tabelas
 
 if nSolido > 0:
-    #usando o NLTK, tentar encontrar ingredientes das refeições aqui incluídas e fazer um listagem da frequência durante o período apresentado
-    pass
+    tesauro = pandas.read_csv('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/tesauro-alimentos.csv', names=['alimento', 'categoria'], skiprows=1)
+    tesauro['alimento'] = tesauro['alimento'].apply(str.lower)
+    tesauro['alimento'] = tesauro['alimento'].apply(str.strip)
+    texto_demo = open('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/amostra.txt', 'r')
+    texto_demo2 = open('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/amostra2.txt', 'r')
+    conteudo_texto_demo = texto_demo.read()
+    conteudo_texto_demo = conteudo_texto_demo + ' ' + texto_demo2.read()
+
+    fdist = nltk.FreqDist(word.lower() for word in nltk.word_tokenize(conteudo_texto_demo))
+    tokens = list(fdist.keys()) #[x for x in fdist]
+    freqs = []
+    for el in tokens:
+        freqs.append(fdist[el])
+
+    dfDistr = pandas.DataFrame(data={'token':pandas.Series(tokens),'frequencia':pandas.Series(freqs)})
+    alimentos_encontrados = dfDistr[dfDistr['token'].isin(tesauro['alimento'])]
+    alimentos_encontrados.sort_values(by='token', inplace=True)
+    alimentos_encontrados.reset_index(drop=True, inplace=True)
+    _ = tesauro[tesauro['alimento'].isin(alimentos_encontrados['token'])]
+    _.sort_values(by='alimento', inplace=True)
+    _.reset_index(drop=True, inplace=True)
+    alimentos_encontrados['categoria'] = _['categoria'] #opcional detalhado
+    soma_categoria = alimentos_encontrados.groupby('categoria').agg(numpy.sum)
+    soma_categoria.to_json('/home/igor/Documentos/UNESP/O TCC - Ivan the Terrible/export.json', 'index')
