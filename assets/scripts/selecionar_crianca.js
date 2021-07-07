@@ -1,4 +1,5 @@
-import $ from jquery;
+import { $ } from "jquery";
+
 $('#crianca-ativa').on('click', function () {
     $('#crianca-menu').toggle('slow');
 });

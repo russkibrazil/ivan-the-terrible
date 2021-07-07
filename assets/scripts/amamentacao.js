@@ -1,5 +1,5 @@
-import $ from jquery;
-import getCrianca from './services';
+import { $ } from "jquery";
+import {getCrianca} from './services';
 let estados = [];
 let ultimoEstado = {};
 
