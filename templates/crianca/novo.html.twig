@@ -3,6 +3,11 @@
 {% block title %}Incuir criança{% endblock title %}
 
 {% block body %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Incluir criança</h1>
+        </div>
+    </div>
     {{ form_start(form) }}
         <div class="row">
             <div class="col-md">
@@ -28,16 +33,17 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col">
+                {{ form_label(form.foto) }}
                 {{ form_widget(form.foto) }}
             </div>
         </div>
 
         <div class="row">
-            <div class="col mx-auto">
-                <button class="btn btn-primary">Salvar</button>
-                <a href="{{ path('crianca_lista') }}" class="btn btn-primary">Cancelar</a>
+            <div class="col">
+                <button class="btn btn-primary mx-auto">Salvar</button>
+                <a href="{{ path('crianca_lista') }}" class="btn btn-primary mx-auto">Cancelar</a>
             </div>
         </div>
     {{ form_end(form) }}

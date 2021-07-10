@@ -8,6 +8,7 @@ use App\Entity\Mamadeira;
 use App\Entity\RefeicaoSolida;
 use App\Entity\Relatorio;
 use App\Entity\SeioMaterno;
+use App\Form\CriancaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,16 +32,23 @@ class CriancaController extends AbstractController
          * @var CriancaVinculo[] $regs
          */
         $regs = $this->getDoctrine()->getRepository(CriancaVinculo::class)->findBy(['usuario' =>  $this->getUser()]);
-        $criancas = [];
-        /**
-         * @var CriancaVinculo $crianca
-         */
-        foreach ($regs as $crianca) {
-            $criancas[] = $crianca->getCrianca();
+        if ($regs)
+        {
+            $criancas = [];
+            /**
+             * @var CriancaVinculo $crianca
+             */
+            foreach ($regs as $crianca) {
+                $criancas[] = $crianca->getCrianca();
+            }
+            return $this->render('crianca/index.html.twig', [
+                'criancas' => $criancas,
+            ]);
         }
-        return $this->render('crianca/index.html.twig', [
-            'lista' => $criancas,
-        ]);
+        else
+        {
+            return $this->render('crianca/nenhum_vinculo.html.twig', []);
+        }
     }
 
     /**
@@ -54,33 +62,43 @@ class CriancaController extends AbstractController
     {
         // * O teste aqui deve ver a possibilidade das buscas retornarem nenhum, um ou mais que um registro (array)
         $doctrine = $this->getDoctrine();
-        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['foto' => $request->cookies->get('cra')]);
-        $relatorios = $doctrine->getRepository(Relatorio::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 6);
-        $mamadeira = $doctrine->getRepository(Mamadeira::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 10);
-        $refeicao = $doctrine->getRepository(RefeicaoSolida::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 10);
-        $leitem = $doctrine->getRepository(SeioMaterno::class)->findBy(['crianca' => $crianca], ['dhFim' => 'DESC'], 10);
-        $entradas = array_merge($mamadeira, $refeicao, $leitem);
-        $i = 0;
-        $elementos = count($entradas);
-        do {
-            $redo = false;
-            if ($entradas[$i]->getDh()->getTimestamp() < $entradas[$i + 1]->getDh()->getTimestamp())
-            {
-                $temp = $entradas[$i + 1];
-                $entradas[$i+1] = $entradas[$i];
-                $entradas[$i] = $temp;
-                $redo = true;
-            }
-            if (++$i == $elementos)
+        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
+        if ($crianca)
+        {
+            $relatorios = $doctrine->getRepository(Relatorio::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 6);
+            $mamadeira = $doctrine->getRepository(Mamadeira::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 10);
+            $refeicao = $doctrine->getRepository(RefeicaoSolida::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 10);
+            $leitem = $doctrine->getRepository(SeioMaterno::class)->findBy(['crianca' => $crianca], ['dhFim' => 'DESC'], 10);
+            $entradas = array_merge($mamadeira, $refeicao, $leitem);
+            if (count($entradas) > 1)
             {
                 $i = 0;
+                $elementos = count($entradas);
+                do {
+                    $redo = false;
+                    if ($entradas[$i]->getDh()->getTimestamp() < $entradas[$i + 1]->getDh()->getTimestamp())
+                    {
+                        $temp = $entradas[$i + 1];
+                        $entradas[$i+1] = $entradas[$i];
+                        $entradas[$i] = $temp;
+                        $redo = true;
+                    }
+                    if (++$i == $elementos)
+                    {
+                        $i = 0;
+                    }
+                } while ($redo);
+                unset($i, $elementos, $temp);
             }
-        } while ($redo);
-        unset($i, $elementos, $temp);
-        return $this->render('crianca/registros.html.twig', [
-            'relatorios' => $relatorios,
-            'entradas' => array_slice($entradas, 0, 15),
-        ]);
+            return $this->render('crianca/registros.html.twig', [
+                'relatorios' => $relatorios,
+                'entradas' => array_slice($entradas, 0, 15),
+            ]);
+        }
+        else
+        {
+            return $this->render('crianca/nenhum_vinculo.html.twig', []);
+        }
     }
 
     /**
@@ -93,7 +111,7 @@ class CriancaController extends AbstractController
     public function incluir(Request $request) : Response
     {
         $dados = new Crianca();
-        $form = $this->createForm(Crianca::class, $dados);
+        $form = $this->createForm(CriancaType::class, $dados);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid())
         {
@@ -103,14 +121,13 @@ class CriancaController extends AbstractController
             $vinculo->setParentesco($form->get('parentesco')->getData());
             $mgr = $this->getDoctrine()->getManager();
             $mgr->persist($dados);
+            $mgr->persist($vinculo);
             $mgr->flush();
             $this->addFlash('sucesso', 'Criança criada');
+            return $this->redirectToRoute('crianca_lista');
         }
         return $this->render('crianca/novo.html.twig', [
             'form' => $form->createView(),
         ]);
     }
-
-
-
 }

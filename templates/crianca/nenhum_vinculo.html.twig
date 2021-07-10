@@ -1,0 +1,10 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Nenhuma criança vinculada{% endblock title %}
+
+{% block body %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Nenhuma criança vinculada</h4>
+        Parece que você está começando a usar o software e não há nenhuma criança vinculada com você. <a href="{{ path('crianca_novo') }}">Que tal adicionar uma agora?</a>
+    </div>
+{% endblock body %}

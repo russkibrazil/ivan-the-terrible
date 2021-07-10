@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Crianca;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,9 +19,13 @@ class CriancaType extends AbstractType
                 'label' => 'Nome'
             ])
             ->add('dn', DateType::class, [
-                'label' => 'Nascimento'
+                'widget' => 'single_text',
+                'label' => 'Nascimento',
+                'input' => 'datetime'
             ])
-            ->add('foto', null, [])
+            ->add('foto', FileType::class, [
+                'required' => false,
+            ])
             ->add('parentesco', TextType::class, [
                 'label' => 'Parentesco',
                 'mapped' => false,
