@@ -10,14 +10,14 @@
         </div>
     </div>
 
-    {% for row in recentes %}
+    {% for row in artigos %}
         <div class="row">
             <div class="col-md-2">
                     <img src="" alt="" class="border-circle">
             </div>
             <div class="col-md">
                 <h1 class="h3">{{ row.titulo }}</h1>
-                <p>{{ row.conteudo|slice(0, 120) }} ...</p>
+                <p>{{ row.corpo|slice(0, 120) }} ...</p>
             </div>
         </div>
     {% endfor %}

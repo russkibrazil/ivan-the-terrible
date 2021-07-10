@@ -25,14 +25,14 @@ class KbArtigoRepository extends ServiceEntityRepository
      */
     public function getConteudoAleatorio(int $limit = 5)
     {
-        $nConteudos = $this->_em->createQuery('SELECT COUNT(c.id) FROM \App\Entity\KbArtigo c')->getResult();
-        if ($nConteudos > $limit)
+        $nConteudos = $this->_em->createQuery('SELECT COUNT(c.id) FROM \App\Entity\KbArtigo c')->getScalarResult();
+        if ($nConteudos[0][1] > $limit)
         {
             $valores = [];
             $a = 0;
             do {
                 do {
-                    $v = rand(1, $nConteudos);
+                    $v = rand(1, $nConteudos[0][1]);
                 } while (array_search($v, $valores));
                 $valores[] = $v;
             } while (++$a < $limit);
