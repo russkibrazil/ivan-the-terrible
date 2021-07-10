@@ -19,10 +19,12 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Controller para ações envolvendo os usuários da plataforma, de maneira geral. Ações específicas de médicos não estão aqui.
  * @Route("/pessoa")
+ * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
  */
 class PessoaController extends AbstractController
 {

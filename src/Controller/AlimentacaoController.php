@@ -20,10 +20,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Classe Controle para as entradas de alimentação
  * @Route("/alimentecao")
+ * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
  */
 class AlimentacaoController extends AbstractController
 {

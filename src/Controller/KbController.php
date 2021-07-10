@@ -6,10 +6,12 @@ use App\Entity\KbArtigo;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Controller para apresentação dos conteúdos inseridos na plataforma, sejam explanativos, informativos ou autorais, que possam ser de ajuda/interesse dos pais
  * @Route("/kb")
+ * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
  */
 class KbController extends AbstractController
 // Neste Controller, vejamos a disputa entre armazenar o HTML as-is ou como Mrkdown e converte-lo no Symfony para HTML e (talvez) utilizar o Stymulus para transmitir os resultados, em qualquer dos casos

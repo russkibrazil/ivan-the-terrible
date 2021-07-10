@@ -12,10 +12,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Controller para rotas referentes aos relatórios e atividades afins
  * @Route("/relatorio")
+ * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
  */
 class RelatorioController extends AbstractController
 {

@@ -13,10 +13,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Classe controle para rotinas da criança
  * @Route("/crianca")
+ * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
  */
 class CriancaController extends AbstractController
 {
