@@ -1,25 +1,29 @@
-<bUtton>+</bUtton>
-
 <div class="row justify-content-center d-lg-none bg-dark fixed-bottom">
 
     <div class="col mt-2">
         <p class="text-center">
-            <a class="text-decoration-none text-white" href="{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}{{ path('home') }}{% else %}{{ path('welcome') }}{% endif %}">
-                <i class="ri-home-line ri-2x"></i><br>Início
-            </a>
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a href="{{ path('home') }}" class="text-decoration-none text-white">
+                    <i class="ri-home-line ri-2x"></i> Início
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="text-decoration-none text-white">
+                    <i class="ri-home-line ri-2x"></i> Acessar
+                </a>
+            {% endif %}
         </p>
     </div>
 
     <div class="col mt-2">
         {% if is_granted('ROLE_USER') %}
             <p class="text-center">
-                <a href="{{ path('empresa_index') }}" class="text-decoration-none text-white">
+                <a href="{{ path('crianca_registros') }}" class="text-decoration-none text-white">
                     <i class="ri-briefcase-4-line ri-2x"></i><br>Registros
                 </a>
             </p>
         {% endif %}
         <p class="text-center">
-            <a class="text-decoration-none text-white" href="{{ path('laudos_index') }}">
+            <a class="text-decoration-none text-white" href="{{ path('crianca_lista') }}">
                 <i class="ri-article-line ri-2x"></i><br>Crianças
             </a>
         </p>
@@ -27,7 +31,7 @@
 
     <div class="col mt-2">
         <p class="text-center">
-            <a class="text-decoration-none text-white" href="{{ path('perfil') }}">
+            <a class="text-decoration-none text-white" href="{{ path('kb_busca') }}">
                 <i class="ri-user-settings-line ri-2x"></i><br>KB
             </a>
         </p>

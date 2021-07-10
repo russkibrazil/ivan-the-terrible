@@ -17,33 +17,39 @@
 
         <ul class="nav nav-pills nav-justified">
             <li class="nav-item">
-                <a class="nav-link text-white" href="{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}{{ path('home') }}{% else %}{{ path('welcome') }}{% endif %}">
-                    <i class="ri-home-line ri-xl"></i> Início
-                </a>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <a href="{{ path('home') }}" class="nav-link text-white">
+                        <i class="ri-home-line ri-xl"></i> Início
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="nav-link text-white">
+                        <i class="ri-home-line ri-xl"></i> Acessar
+                    </a>
+                {% endif %}
             </li>
 
             {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <li class="nav-item">
-                    <a href="{{ path('laudos_index') }}" class="nav-link text-white">
+                    <a href="{{ path('crianca_registros') }}" class="nav-link text-white">
                         <i class="ri-article-line ri-xl"></i> Registros
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ path('perfil') }}" class="nav-link text-white">
+                    <a href="{{ path('crianca_lista') }}" class="nav-link text-white">
                         <i class="ri-user-settings-line ri-xl"></i> Crianças
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ path('empresa_index') }}" class="nav-link text-white">
+                    <a href="{{ path('kb_busca') }}" class="nav-link text-white">
                         <i class="ri-briefcase-4-line ri-xl"></i> KB
                     </a>
                 </li>
 
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a href="{{ path('perfil') }}" class="nav-link text-white">
+                        <a href="{{ path('pessoa_perfil') }}" class="nav-link text-white">
                             <i class="ri-user-settings-line ri-xl"></i> Perfil
                         </a>
                     </li>
