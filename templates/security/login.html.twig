@@ -31,13 +31,13 @@
         <div class="col">
 
             <div class="form-floating mb-3">
-                <label for="inputEmail">Email</label>
-                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placeholder="E-mail" required autofocus>
+                <label for="inputEmail">E-mail</label>
             </div>
 
             <div class="form-floating mb-3">
+                <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" placeholder="Senha" required>
                 <label for="inputPassword">Senha</label>
-                <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
             </div>
 
             <input type="hidden" name="_csrf_token"
@@ -66,3 +66,7 @@
     </div>
 </form>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock javascripts %}
