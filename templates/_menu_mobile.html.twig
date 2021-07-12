@@ -1,18 +1,18 @@
 <div class="row justify-content-center d-lg-none bg-dark fixed-bottom">
 
-    <div class="col mt-2">
+    {#<div class="col mt-2">
         <p class="text-center">
             {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <a href="{{ path('home') }}" class="text-decoration-none text-white">
-                    <i class="ri-home-line ri-2x"></i> Início
+                    <i class="ri-home-line ri-2x"></i><br>Início
                 </a>
             {% else %}
                 <a href="{{ path('app_login') }}" class="text-decoration-none text-white">
-                    <i class="ri-home-line ri-2x"></i> Acessar
+                    <i class="ri-home-line ri-2x"></i><br>Acessar
                 </a>
             {% endif %}
         </p>
-    </div>
+    </div>#}
 
     <div class="col mt-2">
         {% if is_granted('ROLE_USER') %}
@@ -22,6 +22,8 @@
                 </a>
             </p>
         {% endif %}
+    </div>
+    <div class="col mt-2">
         <p class="text-center">
             <a class="text-decoration-none text-white" href="{{ path('crianca_lista') }}">
                 <i class="ri-article-line ri-2x"></i><br>Crianças

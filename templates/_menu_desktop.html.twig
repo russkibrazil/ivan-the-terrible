@@ -1,14 +1,14 @@
 {% if is_granted('ROLE_USER') %}
-    <div class="position-absolute" style="bottom: 80px; right: 40px;">
+    <div class="position-fixed" style="bottom: 105px; right: 50px;">
         <div class="collapse" id="novo-collapse">
             <div class="btn-group-vertical">
-                <a href="{{ path('home') }}" class="btn btn-outline-primary"></a>
-                <a href="{{ path('home') }}" class="btn btn-outline-primary"></a>
-                <a href="{{ path('home') }}" class="btn btn-outline-primary"></a>
-                <a href="{{ path('home') }}" class="btn btn-outline-primary"></a>
+                <a href="{{ path('amamentacao') }}" class="btn btn-outline-primary"><i class="ri-hearts-line"></i></a>
+                <a href="{{ path('bebida') }}" class="btn btn-outline-primary"><i class="ri-thermometer-line"></i></a>
+                <a href="{{ path('refeicao') }}" class="btn btn-outline-primary"><i class="ri-fridge-line"></i></a>
+                <a href="{{ path('refeicao') }}" class="btn btn-outline-primary"><i class="ri-cake-3-line"></i></a>
             </div>
         </div>
-        <button class="btn btn-success rounded-circle" type="button" data-bs-toggle="collapse" data-bs-target="#novo-collapse" aria-expanded="false" aria-controls="novo-collapse">+</button>
+        <button class="btn btn-success rounded-circle fw-bold fs-3" type="button" data-bs-toggle="collapse" data-bs-target="#novo-collapse" aria-expanded="false" aria-controls="novo-collapse">+</button>
     </div>
 {% endif %}
 
