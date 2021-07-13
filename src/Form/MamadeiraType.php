@@ -26,7 +26,7 @@ class MamadeiraType extends AbstractType
 
             ])
             ->add('volume', IntegerType::class, [
-                'label' => 'Quantidade',
+                'label' => 'Quantidade (ml)',
                 'rounding_mode' => \NumberFormatter::ROUND_DOWN
             ])
         ;

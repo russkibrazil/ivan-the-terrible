@@ -84,7 +84,7 @@ class AlimentacaoController extends AbstractController
             }
             if ($item['crianca'] != $ultimaCrianca)
             {
-                $crianca = $repoCrianca->findOneBy(['foto' => $item['crianca']]);
+                $crianca = $repoCrianca->findOneBy(['novoFoto' => $item['crianca']]);
                 $ultimaCrianca =$item['crianca'];
             }
             $log->setCrianca($crianca);
@@ -141,6 +141,8 @@ class AlimentacaoController extends AbstractController
             $om->flush();
             $this->addFlash('sucesso', 'Registro incluído');
         }
-        return $this->render('alimentacao/alimentacao.html.twig', []);
+        return $this->render('alimentacao/alimentacao.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

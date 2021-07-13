@@ -15,11 +15,14 @@ class RefeicaoSolidaType extends AbstractType
     {
         $builder
             ->add('volume', IntegerType::class, [
-                'label' => 'Quantidade',
+                'label' => 'Quantidade (gramas)',
                 'rounding_mode' => \NumberFormatter::ROUND_DOWN
             ])
             ->add('anotacao', TextareaType::class, [
-                'label' => 'Descrição'
+                'label' => 'Descrição',
+                'attr' => [
+                    'rows' => 8
+                ]
             ])
         ;
     }
