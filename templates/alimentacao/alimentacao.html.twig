@@ -3,19 +3,26 @@
 {% block title %}Incluir Refeição{% endblock title %}
 
 {% block body %}
-    {{ form_start(form) }}
     <div class="row">
+        <div class="col">
+            <h1>Incluir refeição</h1>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+    <div class="row mb-3">
         <div class="col-md">
-            <div class="form-floating mb-3">
-                {{ form_widget(form.refeicao, {'attr': {'placeholder': form.refeicao.vars.label}}) }}
-                {{ form_label(form.refeicao) }}
+            <div class="mb-3">
+                {{ form_widget(form.anotacao, {'attr': {'placeholder': form.anotacao.vars.label}}) }}
             </div>
 
-            <div>
-                <p class="h4">Sugestões</p>
-                <button>Minha sugestão</button>
-            </div>
         </div>
+        <div class="col-md-2">
+            <p class="h4">Sugestões</p>
+            <button class="btn btn-primary">Minha sugestão</button>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md">
             <div class="form-floating mb-3">
                 {{ form_widget(form.volume, {'attr': {'placeholder': form.volume.vars.label}}) }}
@@ -26,7 +33,7 @@
     <div class="row">
         <div class="col mx-auto">
             <button type="submit" class="btn btn-primary">Incluir</button>
-            <a href="#" class="btn btn-primary">Cancelar</a>
+            <a href="{{ path('crianca_registros') }}" class="btn btn-primary">Cancelar</a>
         </div>
     </div>
     {{ form_end(form) }}

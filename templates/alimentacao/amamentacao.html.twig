@@ -4,34 +4,41 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-8 mx-auto">
-            <button class="btn btn-success border-round btn-block" type="button" id="acao">Iniciar</button>
+        <div class="col">
+            <h1>Sessão de amamentação</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
+
+    <div class="row my-4">
+        <div class="col-8 mx-auto d-grid" style="height: 230px;">
+            <button class="btn btn-success rounded-circle btn-lg fs-1" type="button" id="acao">Iniciar</button>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-6 mx-auto d-grid">
             <div class="btn-group" role="group" aria-label="Grupo Lado">
-                <button class="btn btn-outline-primary" data-bs-toggle="button" autocomplete="off">E</button>
-                <button class="btn btn-outline-primary" data-bs-toggle="button" autocomplete="off">D</button>
+                <button class="btn btn-outline-primary lado-seio fw-bold active" data-bs-toggle="button" autocomplete="off" aria-pressed="true">E</button>
+                <button class="btn btn-outline-primary lado-seio fw-bold" data-bs-toggle="button" autocomplete="off">D</button>
             </div>
         </div>
     </div>
 
-    <div class="row d-none" id="progresso">
-        <div class="col">
-            <div class="row">
+    <div class="row" id="progresso" style="display: none;">
+        <div class="col-6 mx-auto d-grid justify-content-center">
+            <div class="row border border-4 border-dark">
                 <div class="col-2">
                     <div class="spinner-grow" role="status">
                         <span class="visually-hidden">Registrando...</span>
                     </div>
                 </div>
-                <div class="col">Registrando...</div>
+                <div class="col mr-4">Registrando...</div>
             </div>
-            <div class="row">
-                <div class="col-8 mx-auto">
-                    <button class="btn btn-primary btn-block" type="button" id="fim" data-end="{{ path('amamentacao_post') }}">Finalizar</button>
-                </div>
-            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8 mx-auto d-grid">
+            <button class="btn btn-primary btn-block" type="button" id="fim" data-end="{{ path('amamentacao_post') }}" disabled="false">Finalizar</button>
         </div>
     </div>
 {% endblock body %}
