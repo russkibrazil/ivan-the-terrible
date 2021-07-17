@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\Usuario;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -66,11 +67,10 @@ class AppFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new InvalidCsrfTokenException();
         }
 
-        $user = $this->entityManager->getRepository(Usuario::class)->findOneBy(['email' => $credentials['email']]);
+        $user = $userProvider->loadUserByUsername($credentials['email']);
 
         if (!$user) {
-            // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Email could not be found.');
+            throw new CustomUserMessageAuthenticationException('Email não encontrado.');
         }
 
         return $user;
@@ -84,10 +84,29 @@ class AppFormAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            return new RedirectResponse($targetPath);
+            $response = new RedirectResponse($targetPath);
+        }
+        else
+        {
+            $response = new RedirectResponse($this->urlGenerator->generate('home'));
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+        /**
+         * @var Usuario $u
+         */
+        $u = $this->entityManager->getRepository(Usuario::class)->findOneBy(['email' => $request->request->get('email')]);
+        $criancasRecentes = $u->getCriancaRecentes();
+        if ($criancasRecentes)
+        {
+            $cra = array_shift($criancasRecentes);
+            $strOut = '';
+            foreach ($criancasRecentes as $row) {
+                $strOut .= array_keys($row)[0] . ',' . array_values($row)[0] . '|';
+            }
+            $response->headers->setCookie(Cookie::create('cra', array_keys($cra)[0] . ',' . array_values($cra)[0], 0, '/', null, null, false));
+            $response->headers->setCookie(Cookie::create('cr', $strOut, 0, '/', null, null, false));
+        }
+        return $response;
     }
 
     protected function getLoginUrl()

@@ -1,3 +1,23 @@
+{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+    <div class="d-lg-none">
+        <div class="position-fixed" style="bottom: 105px; right: 150px;">
+            <div class="row">
+                <div class="col">
+                    <div class="collapse" id="crianca-collapse">
+                        <div class="btn-group">
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <button class="btn btn-success rounded-circle imagem-crianca-ativa" type="button" data-bs-toggle="collapse" data-bs-target="#crianca-collapse" aria-expanded="false" aria-controls="crianca-collapse" data-update="{{ path('pessoa_atualizar_criancas_ajax') }}">
+                        <img src="" alt="" class="rounded-circle" style="height: 32px;">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 <div class="row justify-content-center d-lg-none bg-dark fixed-bottom">
 
     {#<div class="col mt-2">

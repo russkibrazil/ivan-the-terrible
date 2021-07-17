@@ -84,6 +84,11 @@ class Usuario implements UserInterface
      */
     private $isVerified = false;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $criancaRecentes = [];
+
     public function __construct()
     {
         $this->criancaVinculos = new ArrayCollection();
@@ -244,6 +249,18 @@ class Usuario implements UserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getCriancaRecentes(): ?array
+    {
+        return $this->criancaRecentes;
+    }
+
+    public function setCriancaRecentes(?array $criancaRecentes): self
+    {
+        $this->criancaRecentes = $criancaRecentes;
 
         return $this;
     }

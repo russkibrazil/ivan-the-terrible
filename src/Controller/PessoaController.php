@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Crianca;
 use App\Entity\CriancaVinculo;
 use App\Entity\Usuario;
 use App\Form\AlterarSenhaType;
@@ -187,7 +188,7 @@ class PessoaController extends AbstractController
          */
         $usuRepo = $doctrine->getRepository(Usuario::class);
         $usuario = $usuRepo->findByNomeAndEmail( $request->request->get('nome'), strstr($request->request->get('email'), '*', true));
-        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['foto' => $request->cookies->get('cra')]);
+        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
         $vinculo = (new CriancaVinculo())
             ->setCrianca($crianca)
             ->setUsuario($usuario)
@@ -205,5 +206,24 @@ class PessoaController extends AbstractController
         {
             return new JsonResponse("{'erros': {(string) $erros}", 400);
         }
+    }
+
+    /**
+     * Rota para atualizar a lista de crianças no perfil do usuário
+     * @Route("/criancas-recentes", name="pessoa_atualizar_criancas_ajax", methods={"POST"})
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function atualizarCriancasRecentes(Request $request)
+    {
+        /**
+         * @var \App\Entity\Usuario $u
+         */
+        $u = $this->getUser();
+        $u->setCriancaRecentes($request->request->get('criancas'));
+        $this->getDoctrine()->getManager()->flush();
+
+        return new JsonResponse();
     }
 }

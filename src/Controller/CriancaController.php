@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Classe controle para rotinas da criança
@@ -64,7 +65,7 @@ class CriancaController extends AbstractController
     {
         // * O teste aqui deve ver a possibilidade das buscas retornarem nenhum, um ou mais que um registro (array)
         $doctrine = $this->getDoctrine();
-        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
+        $crianca = $doctrine->getRepository(Crianca::class)->find(strtok(urldecode($request->cookies->get('cra')),','));
         if ($crianca)
         {
             $relatorios = $doctrine->getRepository(Relatorio::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 6);
@@ -117,16 +118,48 @@ class CriancaController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid())
         {
+            /**
+             * @var \App\Entity\Usuario $u
+             */
+            $u = $this->getUser();
             $vinculo = new CriancaVinculo();
             $vinculo->setCrianca($dados);
-            $vinculo->setUsuario($this->getUser());
+            $vinculo->setUsuario($u);
             $vinculo->setParentesco($form->get('parentesco')->getData());
+            if ($dados->getNomeFoto() == null)
+            {
+                $dados->setNomeFoto(strtolower($dados->getNome()[0]) . '.png');
+            }
+
             $mgr = $this->getDoctrine()->getManager();
             $mgr->persist($dados);
             $mgr->persist($vinculo);
             $mgr->flush();
             $this->addFlash('sucesso', 'Criança criada');
-            return $this->redirectToRoute('crianca_lista');
+
+            $recentes = $u->getCriancaRecentes();
+            if ($recentes == null)
+            {
+                $recentes = [];
+            }
+            array_unshift($recentes, [$dados->getId() => $dados->getNomeFoto()]);
+            unset($recentes[5]);
+            $u->setCriancaRecentes($recentes);
+            $mgr->flush();
+
+            $cra = array_shift($recentes);
+            $strOut = '';
+            foreach ($recentes as $row) {
+                $strOut .= array_keys($row[0]) . ',' . array_values($row[0]) . '|';
+            }
+            /**
+             * @var \Symfony\Component\HttpFoundation\RedirectResponse $response
+             */
+            $response = $this->redirectToRoute('crianca_lista');
+            $response->headers->setCookie(Cookie::create('cra', array_keys($cra)[0] . ',' . array_values($cra)[0], 0, '/',null, null, false));
+            $response->headers->setCookie(Cookie::create('cr', $strOut, 0, '/', null, null, false));
+
+            return $response;
         }
         return $this->render('crianca/novo.html.twig', [
             'form' => $form->createView(),
