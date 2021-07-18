@@ -95,4 +95,14 @@ class Mamadeira
 
         return $this;
     }
+
+    /**
+     * Retorna o nome da classe para uso no Twig
+     *
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return explode('\\', get_class())[2];
+    }
 }

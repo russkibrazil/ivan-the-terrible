@@ -96,4 +96,24 @@ class SeioMaterno
 
         return $this;
     }
+
+    /**
+     * Função para padronizar a comparação de tempo com as outras entidades. Permite deduzir que a mamada está concluída quando retornar um objeto DateTime
+     *
+     * @return \DateTimeInterface|null
+     */
+    public function getDh(): ?\DateTimeInterface
+    {
+        return $this->dhFim;
+    }
+
+    /**
+     * Retorna o nome da classe para uso no Twig
+     *
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return explode('\\', get_class())[2];
+    }
 }

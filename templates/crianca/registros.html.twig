@@ -3,46 +3,111 @@
 {% block title %}Registros{% endblock title %}
 
 {% block body %}
-    <h1>Entradas recentes</h1>
-    <table class="table table-striped">
-        <tbody>
-            {% for row in entradas %}
-            <tr>
-                <td></td>
-                <td>{{ row.volume }}</td>
-                {#
-                    Comida Sólida = <i class="ri-restaurant-line"></i>
-                    Bebida = <i class="ri-cup-line"></i>
-                    Amamentação = <i class="ri-hearts-line"></i>
-                #}
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="2">
-                    <p>Não há registros para esta criança</p>
-                    <button type="button">Incluir</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col">
+            <h1>Entradas recentes</h1>
+        </div>
+    </div>
 
-    <h1>Relatórios</h1>
-    <table class="table table-striped">
-        <tbody>
-            {% for row in relatorios %}
-                <tr>
-                    <td><a href="{{ vich_uploader_asset(row, 'arquivo') }}"><i class="ri-file-pdf-line"></i></a></td>
-                    <td>{{ row.dh }}</td>
-                    <td>{{ row.dInicio }} - {{ row.dFim }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3">
-                        Não há relatórios para esta criança
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="row mb-5">
+        <div class="col">
+            <table class="table table-striped">
+                <tbody>
+                    {% for row in entradas %}
+                    <tr>
+                        {% if row.class == 'SeioMaterno' %}
+                            <td>
+                                <i class="ri-hearts-line" data-bs-toggle="tooltip" data-bs-placement="right" title="Amamaentação"></i>
+                            </td>
+                            <td>
+                                {{ row.dhInicio|date("d/m/Y H:i") }}
+                            </td>
+                            <td>
+                                {{ (row.dhFim|date("U") - row.dhInicio|date("U"))/60 }} minutos
+                            </td>
+                        {% elseif row.class == 'Mamadeira' %}
+                            <td>
+                                <i class="ri-cup-line" data-bs-toggle="tooltip" data-bs-placement="right" title="Líquido"></i>
+                            </td>
+                            <td>
+                                {% if row.alimento == 'LEITEM' %}
+                                    Leite Materno
+                                {% elseif row.alimento == 'LEITEF' %}
+                                    Fórmula infantil
+                                {% elseif row.alimento == 'LEITED' %}
+                                    Outros leites
+                                {% elseif row.alimento == 'AGUA' %}
+                                    Água
+                                {% elseif row.alimento == 'CHA' %}
+                                    Chá
+                                {% elseif row.alimento == 'SUCO' %}
+                                    Suco
+                                {% else %}
+                                    Outros
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ row.volume|default('-') }} ml
+                            </td>
+                        {% else %}
+                            <td>
+                                <i class="ri-restaurant-line" data-bs-toggle="tooltip" data-bs-placement="right" title="Alimentação sólida"></i>
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                {{ row.volume|default('-') }} g
+                            </td>
+                        {% endif %}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2">
+                            <p>Não há registros para esta criança</p>
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#novo-collapse" aria-expanded="false" aria-controls="novo-collapse">Incluir</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h1>Relatórios</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Arquivo</th>
+                        <th>Data</th>
+                        <th>Período</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in relatorios %}
+                        <tr>
+                            <td><a href="{{ vich_uploader_asset(row, 'arquivo') }}"><i class="ri-file-pdf-line"></i></a></td>
+                            <td>{{ row.dh|date("d/m/Y") }}</td>
+                            <td>{{ row.dInicio|date("d/m/Y") }} - {{ row.dFim|date("d/m/Y") }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">
+                                <p>Não há relatórios para esta criança</p>
+                                <a href="{{ path('relatorio_requerir') }}" class="btn btn-primary">Requisitar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock body %}

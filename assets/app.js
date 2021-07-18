@@ -3,7 +3,7 @@ import './styles/app.css';
 import './bootstrap';
 import './styles/app.css';
 import $ from 'jquery';
-require('bootstrap');
+const bootstrap = require('../node_modules/bootstrap');
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'remixicon/fonts/remixicon.css';
 
@@ -18,6 +18,7 @@ $(() => {
     if ($('button.imagem-crianca-ativa').length > 0) {
         carregaImagemPerfilCrianca();
     }
+    inicializarTooltips();
 });
 
 function carregaImagemPerfilCrianca() {
@@ -110,4 +111,11 @@ function criaPath(path) {
     else {
         return `/img/${path}`;
     }
+}
+
+function inicializarTooltips() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
 }

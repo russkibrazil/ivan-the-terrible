@@ -73,26 +73,20 @@ class CriancaController extends AbstractController
             $refeicao = $doctrine->getRepository(RefeicaoSolida::class)->findBy(['crianca' => $crianca], ['dh' => 'DESC'], 10);
             $leitem = $doctrine->getRepository(SeioMaterno::class)->findBy(['crianca' => $crianca], ['dhFim' => 'DESC'], 10);
             $entradas = array_merge($mamadeira, $refeicao, $leitem);
-            if (count($entradas) > 1)
-            {
-                $i = 0;
-                $elementos = count($entradas);
-                do {
-                    $redo = false;
-                    if ($entradas[$i]->getDh()->getTimestamp() < $entradas[$i + 1]->getDh()->getTimestamp())
-                    {
-                        $temp = $entradas[$i + 1];
-                        $entradas[$i+1] = $entradas[$i];
-                        $entradas[$i] = $temp;
+
+            $redo = true;
+            for ($i=0; $i < count($entradas)-1 && $redo; $i++) {
+                $redo = false;
+                for ($j=0; $j < count($entradas)-$i-1; $j++) {
+                    if ($entradas[$j]->getDh()->getTimestamp() < $entradas[$j+1]->getDh()->getTimestamp())            {
                         $redo = true;
+                        $temp = $entradas[$j];
+                        $entradas[$j] = $entradas[$j+1];
+                        $entradas[$j+1] = $temp;
                     }
-                    if (++$i == $elementos)
-                    {
-                        $i = 0;
-                    }
-                } while ($redo);
-                unset($i, $elementos, $temp);
+                }
             }
+            unset($i, $j, $elementos, $temp);
             return $this->render('crianca/registros.html.twig', [
                 'relatorios' => $relatorios,
                 'entradas' => array_slice($entradas, 0, 15),
