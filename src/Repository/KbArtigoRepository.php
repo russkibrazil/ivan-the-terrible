@@ -50,15 +50,55 @@ class KbArtigoRepository extends ServiceEntityRepository
         return $this->findAll();
     }
 
-    /*
-    public function findOneBySomeField($value): ?KbArtigo
+    /**
+     * Procedure para buscar artigos contendo as palavras buscadas pelo usuário, restrigo às tags do documento
+     *
+     * @param string|array $stems lista com as palavras a serem buscadas nas tags
+     * @return KbArtigo[]
+     */
+    public function getArtigosBuscados($stems): array
     {
-        return $this->createQueryBuilder('k')
-            ->andWhere('k.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (is_string($stems))
+        {
+            $palavras = trim($stems, "\t\n\r\0\x0B[]{}()");
+            $palavras = str_replace(["'", "\""], '', $palavras);
+            $arr_palavras = explode(',', $palavras);
+        }
+        else
+        {
+            if (!is_array($stems))
+            {
+                return null;
+            }
+            $arr_palavras = $stems;
+        }
+
+        $resultados = [];
+        foreach ($arr_palavras as $palavra) {
+            dump($palavra);
+            // $q = $this->_em->createQuery('
+            //     SELECT c
+            //     FROM \App\Entity\KbArtigo c
+            //     WHERE (SELECT JSON_CONTAINS(cc.tags, :palavra) FROM \App\Entity\KbArtigo cc WHERE cc.id = c.id) = 1
+            //     '
+            // )
+            //     ->setParameter('palavra', '"' . $palavra . '"')
+            //     ->setMaxResults(15)
+            // ;
+            $q = $this->_em->createQuery('
+                SELECT c
+                FROM \App\Entity\KbArtigo c
+                WHERE (SELECT JSON_SEARCH(c.tags,"one", :palavra) FROM \App\Entity\KbArtigo cc WHERE cc.id = c.id) IS NOT NULL
+                '
+            )
+                ->setParameter('palavra', $palavra . '%')
+                ->setMaxResults(15)
+            ;
+            $resultados = array_merge($resultados, $q->getResult());
+
+        }
+        unset($palavra);
+        // IDEA Talvez o mais frequente que fosse, mais no topo da pesquisa
+        return array_unique($resultados, SORT_REGULAR);
     }
-    */
 }

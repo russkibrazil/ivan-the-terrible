@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\KbArtigo;
+use App\Form\KbBuscaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Controller para apresentação dos conteúdos inseridos na plataforma, sejam explanativos, informativos ou autorais, que possam ser de ajuda/interesse dos pais
@@ -21,22 +23,34 @@ class KbController extends AbstractController
     /**
      * @Route("/", name="kb_busca")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        /**
-         * @var \App\Repository\KbArtigoRepository $repo
-         */
-        $repo = $this->getDoctrine()->getRepository(KbArtigo::class);
+        $form = $this->createForm(KbBuscaType::class);
+        $form->handleRequest($request);
 
-        $recentes = $repo->getConteudoAleatorio();
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $artigos = $this->buscarConteudo($form->get('busca')->getData());
+        }
+        else
+        {
+            /**
+             * @var \App\Repository\KbArtigoRepository $repo
+             */
+            $repo = $this->getDoctrine()->getRepository(KbArtigo::class);
+
+            $artigos = $repo->getConteudoAleatorio();
+        }
+
         return $this->render('kb/index.html.twig', [
-            'artigos' => $recentes,
+            'artigos' => $artigos,
+            'form' => $form->createView()
         ]);
     }
 
     /**
      * Apresentação do conteúdo buscado
-     * @Route("/{$slug}", name="kb_mostrar_conteudo", methods={"GET"})
+     * @Route("/{slug}", name="kb_mostrar_conteudo", methods={"GET"})
      * @return Response
      */
     public function show($slug): Response
@@ -50,10 +64,24 @@ class KbController extends AbstractController
             // CHECK É necessário personalização ou a página padrão do Twig será utilizada?
             return new Response('', 404);
         }
-        // TODO Instalar conversor MD=>HTML
         return $this->render('kb/show.html.twig', [
             'titulo' => $art->getTitulo(),
             'conteudo' => $art->getCorpo(),
         ]);
+    }
+
+    private function buscarConteudo(string $query)
+    {
+        # https://stackoverflow.com/questions/19735250/running-a-python-script-from-php
+        // IDEA Oportunidade de implementar Stimulus
+        $comando = escapeshellcmd('/home/igor/anaconda3/bin/python "' . __DIR__ . '/../../search_content/search.py" ' . $query);
+        $res = exec($comando);
+        /**
+         * @var \App\Repository\KbArtigoRepository $kbRepo
+         */
+        $kbRepo = $this->getDoctrine()->getRepository(KbArtigo::class);
+        $artigos = $kbRepo->getArtigosBuscados($res);
+
+        return $artigos;
     }
 }
