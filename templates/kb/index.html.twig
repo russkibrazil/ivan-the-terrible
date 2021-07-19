@@ -1,23 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Central de conteúdo{% endblock %}
+{% block title %}Central de conhecimento{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col">
-            <input type="text" name="busca" id="busca_input">
-            <button class="btn btn-primary" data-link="">Buscar</button>
+            <h1>Central de conhecimento</h1>
         </div>
     </div>
 
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col">
+                {{ form_widget(form.busca) }}
+        </div>
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
     {% for row in artigos %}
-        <div class="row">
-            <div class="col-md-2">
-                    <img src="" alt="" class="border-circle">
+        <div class="row g-0 my-2 bg-light position-relative">
+            <div class="col-md-6 mb-md-0 p-md-4">
+                <img src="" class="w-100" alt="...">
             </div>
-            <div class="col-md">
-                <h1 class="h3">{{ row.titulo }}</h1>
-                <p>{{ row.corpo|slice(0, 120) }} ...</p>
+            <div class="col-md-6 p-4 ps-md-0">
+                <h5 class="mt-0">{{ row.titulo }}</h5>
+                <p>{{- row.corpo|slice(0, 120)|markdown_to_html -}}...</p>
+                <a href="{{ path('kb_mostrar_conteudo', {slug: row.slug}) }}" class="btn btn-primary stretched-link">Ver mais</a>
             </div>
         </div>
     {% endfor %}

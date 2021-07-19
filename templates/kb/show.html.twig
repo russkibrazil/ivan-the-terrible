@@ -3,5 +3,6 @@
 {% block title %}{{ titulo }}{% endblock title %}
 
 {% block body %}
-    {{ conteudo|raw }}
+ {# TODO Incluir botão de voltar #}
+    {{- conteudo|markdown_to_html -}}
 {% endblock body %}
