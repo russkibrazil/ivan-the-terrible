@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" type="text/css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1>Relatório da criança</h1>
+                    {{ crianca.nome }}
+                    {{ crianca.dn }}
+                    <br>
+                    <p class="fw-bold">Intervalo da análise: {{ dataInicio }} a {{ dataFim }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>Dados da alimentação</h2>
+
+                </div>
+            </div>
+
+            {% if amamentacao is not empty %}
+            <div class="row">
+                <div class="col">
+                    <h3>Resumo do consumo de leite materno</h3>
+
+                    <p>Confira aqui o resumo do consumo do leite materno dentro do período. Está incluso o leite materno ingerido diretamente do seio da mãe, tanto quando fornecido por outros métodos, como por exemplo, mamadeira.</p>
+                    <p class="fst-italic">Importante: os volumes de leite materno consumido diretamente do seio materno são estimados utilizando os dados fornecidos pelos usuários. A precisão é sujeita também a frequência e precisão dos registros informados pelos usuários. Assim sendo, alguns dados podem estar fora do normal devido a informação insuficiente disponível no banco de dados, o que não caracteriza erro de cálculo. Sempre consulte um médico para avaliar os dados apresentados.</p>
+
+                    <img src="{{ amamentacao_barras }}" alt="">
+                    <img src="{{ amamentacao_scatter }}" alt="">
+                </div>
+            </div>
+            {% endif %}
+
+            {% if liquidos is not empty %}
+                <h3>Resumo do consumo de líquidos e de mamadeiras</h3>
+                <p>Nesta área, estão informados os volumes de líquidos que a criança consumiu e quais líquidos foram esses, separados diariamente.</p>
+
+                <img src="{{ grafico_liquidos }}" alt="">
+            {% endif %}
+
+            {% if solidos is not empty %}
+                <h3>Compilado da alimentação sólida</h3>
+                <p>Aqui é apresentado um resumo das famílias de alimentos consumidos pela criança e quantas vezes foram verificados o consumo destes alimentos no prazo demarcado.</p>
+                <p class="fst-italic">Importante: para que os dados sejam computados adequadamente, o usuário deve ter preenchido o relato da refeição sólida com pelo menos os alimentos consumidos naquela refeição.</p>
+
+                <table class="table table-striped">
+                    <thead>
+                        <th>
+                            <td>Tipo</td>
+                            <td>Frequência</td>
+                        </th>
+                    </thead>
+                    <tbody>
+                        {% for row in solidos %}
+                            <tr>
+                                <td>{{ row.tipo }}</td>
+                                <td>{{ row.valor }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+        </div>
+    </body>
+</html>
