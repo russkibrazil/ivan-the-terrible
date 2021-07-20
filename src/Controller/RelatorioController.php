@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Crianca;
 use App\Entity\Relatorio;
 use App\Form\IntervaloBuscaType;
+use App\Message\DadosAlimentacaoMessage;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -53,13 +54,12 @@ class RelatorioController extends AbstractController
              */
             $rrepo = $doctrine->getRepository(Relatorio::class);
             $rels = $rrepo->findBydInicialAnddFinal($inicio, $fim);
-            $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['foto' => $request->cookies->get('cra')]);
+            $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
             if (count($rels) == 0 || $rels == false)
             {
                 $this->addFlash('sucesso', 'Pedido de relatório incluído. Aguarde autorização dos pais para a geração do documento.');
                 $this->geracaoPedidoRelatorio($inicio, $fim, $crianca);
-                //TODO Redirecionar para...?
-                return $this->redirectToRoute('home');
+                return $this->redirectToRoute('crianca_lista');
             }
             else
             {
@@ -103,7 +103,9 @@ class RelatorioController extends AbstractController
                 return $response;
             }
         }
-        return $this->render('relatorio/selecionar_data.html.twig', []);
+        return $this->render('relatorio/selecionar_data.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 // relatorio_acesso
     public function requerirAcesso(Request $request) : JsonResponse
@@ -118,12 +120,19 @@ class RelatorioController extends AbstractController
         return new JsonResponse();
     }
 
-    //relatorio_forcar_requisicao
+    /**
+     * Requisição de relatório via AJAX
+     *
+     * @Route("/requerir/concluir-pedido", name="relatorio_concluir_pedido", methods={"POST"})
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function pedidoRelatorio(Request $request) : JsonResponse
     {
         $data = explode($request->cookies->get('dataReq'), '|');
         $doctrine = $this->getDoctrine();
-        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['foto' => $request->cookies->get('cra')]);
+        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
         $this->geracaoPedidoRelatorio(new DateTime($data[0]), new DateTime($data[1]), $crianca);
         $request->cookies->remove('dataReq');
         return new JsonResponse();
@@ -139,6 +148,6 @@ class RelatorioController extends AbstractController
         $mgr = $this->getDoctrine()->getManager();
         $mgr->persist($rel);
         $mgr->flush();
-        // TODO Enviar trabalho para o message broker
+        $this->dispatchMessage(new DadosAlimentacaoMessage($crianca->getId(), $inicio, $fim, []));
     }
 }
