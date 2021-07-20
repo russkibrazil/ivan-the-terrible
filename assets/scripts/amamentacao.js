@@ -23,7 +23,7 @@ $('#acao').on('click', function () {
         }
         else
         {
-            if (lado != ultimoEstado.lado || "crianca" != ultimoEstado.crianca)
+            if (lado != ultimoEstado.lado || (getCrianca() - 0) != ultimoEstado.crianca)
             {
                 ultimoEstado.dhFim = `@${Math.round(Date.now()/1000)}`;
                 estados.push(ultimoEstado);
@@ -52,7 +52,7 @@ $('#fim').on('click', function () {
     }
     $.post($('#fim').data('end'), {'estados': estados},
         function (data, textStatus, jqXHR) {
-
+            location.href = '/crianca/registros';
         },
         "json"
     );
@@ -76,10 +76,10 @@ $('div.btn-group .lado-seio').on('click', function (sender) {
     }
 });
 
-function novoObjeto() { // TODO: Implementar getCriança
+function novoObjeto() {
     return {'lado': 'E',
     'dhInicio': `@${Math.round(Date.now()/1000)}`,
     'dhFim': null,
-    'crianca': "crianca"
+    'crianca': getCrianca() - 0
     };
 }
