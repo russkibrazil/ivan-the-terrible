@@ -51,7 +51,7 @@ function carregaImagemPerfilCrianca() {
 function ativarCrianca(e) {
     let $ativa = $(e.currentTarget).find('img');
     let $ativa_anterior = $('button.imagem-crianca-ativa img');
-    const craUpdatedCookie = `cra=${encodeURIComponent(`${$ativa.attr('alt')},${$ativa.attr('src')}`)};max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;`;
+    const craUpdatedCookie = `cra=${encodeURIComponent(`${$ativa.attr('alt')},${$ativa.attr('src')}`)};max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;Path=/;`;
     const novo_data = [$ativa.attr('alt'), $ativa.attr('src')];
     const anterior_data = [$ativa_anterior[0].attributes['alt'].nodeValue, $ativa_anterior[0].attributes['src'].nodeValue];
     let $menu_desktop = $('div.btn-group ul.dropdown-menu');
@@ -87,7 +87,7 @@ function ativarCrianca(e) {
     for (const el of $recentes_atualizados) {
         crUpdatedCookie += encodeURIComponent(`${el.attributes['alt'].nodeValue},${el.attributes['src'].nodeValue}|`);
     }
-    crUpdatedCookie += `;max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;`
+    crUpdatedCookie += `;max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;Path=/;`
 
     document.cookie = craUpdatedCookie;
     document.cookie = crUpdatedCookie;
