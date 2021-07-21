@@ -84,7 +84,7 @@ class AlimentacaoController extends AbstractController
             }
             if ($item['crianca'] != $ultimaCrianca)
             {
-                $crianca = $repoCrianca->findOneBy(['novoFoto' => $item['crianca']]);
+                $crianca = $repoCrianca->find($item['crianca']);
                 $ultimaCrianca =$item['crianca'];
             }
             $log->setCrianca($crianca);
@@ -111,10 +111,12 @@ class AlimentacaoController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
             $dados->setDh(new DateTime());
+            $dados->setCrianca($this->getDoctrine()->getRepository(Crianca::class)->find(explode(',',$request->cookies->get('cra'))[0]));
             $om = $this->getDoctrine()->getManager();
             $om->persist($dados);
             $om->flush();
             $this->addFlash('sucesso', 'Registro incluído');
+            return $this->redirectToRoute('crianca_registros');
         }
         return $this->render('alimentacao/bebida.html.twig', [
             'form' => $form->createView()
@@ -136,10 +138,12 @@ class AlimentacaoController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
             $dados->setDh(new DateTime());
+            $dados->setCrianca($this->getDoctrine()->getRepository(Crianca::class)->find(explode(',',$request->cookies->get('cra'))[0]));
             $om = $this->getDoctrine()->getManager();
             $om->persist($dados);
             $om->flush();
             $this->addFlash('sucesso', 'Registro incluído');
+            return $this->redirectToRoute('crianca_registros');
         }
         return $this->render('alimentacao/alimentacao.html.twig', [
             'form' => $form->createView()

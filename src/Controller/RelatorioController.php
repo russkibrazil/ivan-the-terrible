@@ -54,7 +54,7 @@ class RelatorioController extends AbstractController
              */
             $rrepo = $doctrine->getRepository(Relatorio::class);
             $rels = $rrepo->findBydInicialAnddFinal($inicio, $fim);
-            $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
+            $crianca = $this->getDoctrine()->getRepository(Crianca::class)->find(explode(',',$request->cookies->get('cra'))[0]);
             if (count($rels) == 0 || $rels == false)
             {
                 $this->addFlash('sucesso', 'Pedido de relatório incluído. Aguarde autorização dos pais para a geração do documento.');
@@ -132,7 +132,7 @@ class RelatorioController extends AbstractController
     {
         $data = explode($request->cookies->get('dataReq'), '|');
         $doctrine = $this->getDoctrine();
-        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
+        $crianca = $this->getDoctrine()->getRepository(Crianca::class)->find(explode(',',$request->cookies->get('cra'))[0]);
         $this->geracaoPedidoRelatorio(new DateTime($data[0]), new DateTime($data[1]), $crianca);
         $request->cookies->remove('dataReq');
         return new JsonResponse();

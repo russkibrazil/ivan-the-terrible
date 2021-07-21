@@ -20,7 +20,7 @@ class Mamadeira
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank
+     * Assert\NotBlank
      */
     private $dh;
 
@@ -39,7 +39,7 @@ class Mamadeira
     /**
      * @ORM\ManyToOne(targetEntity=Crianca::class)
      * @ORM\JoinColumn(nullable=false)
-     * @Assert\NotBlank
+     * Assert\NotBlank
      */
     private $crianca;
 

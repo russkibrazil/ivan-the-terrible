@@ -188,7 +188,7 @@ class PessoaController extends AbstractController
          */
         $usuRepo = $doctrine->getRepository(Usuario::class);
         $usuario = $usuRepo->findByNomeAndEmail( $request->request->get('nome'), strstr($request->request->get('email'), '*', true));
-        $crianca = $doctrine->getRepository(Crianca::class)->findOneBy(['nomeFoto' => $request->cookies->get('cra')]);
+        $crianca = $this->getDoctrine()->getRepository(Crianca::class)->find(explode(',',$request->cookies->get('cra'))[0]);
         $vinculo = (new CriancaVinculo())
             ->setCrianca($crianca)
             ->setUsuario($usuario)
