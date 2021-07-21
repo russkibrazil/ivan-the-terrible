@@ -1,5 +1,5 @@
 import $ from "../../node_modules/jquery";
-import getCrianca from './services';
+import { getCrianca } from './services';
 let estados = [];
 let ultimoEstado = undefined;
 

@@ -26,6 +26,7 @@ Encore
     .addEntry('services', './assets/scripts/services.js')
     .addEntry('sRelatorio', './assets/scripts/selecionar_relatorio.js')
     .addEntry('vinculo_pessoa', './assets/scripts/vincular_usuario.js')
+    .addEntry('index_crianca', './assets/scripts/index_crianca.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

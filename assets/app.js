@@ -6,6 +6,7 @@ import $ from 'jquery';
 const bootstrap = require('../node_modules/bootstrap');
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'remixicon/fonts/remixicon.css';
+import { getCrianca, setCrianca } from './scripts/services';
 
 const drop_item = `<li>
 <button type="button" class="dropdown-item imagem-crianca-recente">
@@ -21,6 +22,7 @@ $(() => {
     inicializarTooltips();
 });
 
+// FIXME Refatorar para consumo do scripts/services.js
 function carregaImagemPerfilCrianca() {
     const cookies = decodeURIComponent(document.cookie).split(';');
     const cra = cookies.find(el => el.startsWith('cra=')).split('=')[1].split(',');
@@ -49,7 +51,7 @@ function carregaImagemPerfilCrianca() {
 function ativarCrianca(e) {
     let $ativa = $(e.currentTarget).find('img');
     let $ativa_anterior = $('button.imagem-crianca-ativa img');
-    const craUpdatedCookie = `cra=${$ativa.attr('alt')},${$ativa.attr('src')};max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;`;
+    const craUpdatedCookie = `cra=${encodeURIComponent(`${$ativa.attr('alt')},${$ativa.attr('src')}`)};max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;`;
     const novo_data = [$ativa.attr('alt'), $ativa.attr('src')];
     const anterior_data = [$ativa_anterior[0].attributes['alt'].nodeValue, $ativa_anterior[0].attributes['src'].nodeValue];
     let $menu_desktop = $('div.btn-group ul.dropdown-menu');
@@ -81,14 +83,16 @@ function ativarCrianca(e) {
     );
 
     const $recentes_atualizados = $menu_desktop.find('img');
-    let crUpdatedCookie = '';
+    let crUpdatedCookie = 'cr=';
     for (const el of $recentes_atualizados) {
-        crUpdatedCookie += `${el.attributes['alt'].nodeValue},${el.attributes['src'].nodeValue}|`;
+        crUpdatedCookie += encodeURIComponent(`${el.attributes['alt'].nodeValue},${el.attributes['src'].nodeValue}|`);
     }
     crUpdatedCookie += `;max_age=${Math.round(Date.now() / 1000) + 60 * 60 * 12};SameSite=Lax;`
 
     document.cookie = craUpdatedCookie;
     document.cookie = crUpdatedCookie;
+
+    // FIXME: Se a criança for alterada na página crianca/registros, atualizar a página
 }
 
 function novoElementoPerfil(tipo, dados) {

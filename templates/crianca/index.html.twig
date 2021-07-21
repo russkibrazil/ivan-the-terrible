@@ -3,19 +3,40 @@
 {% block title %}Minhas crianças{% endblock %}
 
 {% block body %}
+    <div class="row">
+        <div class="col">
+            <h1>Minhas crianças</h1>
+            <span class="d-none" id="paths" data-reg="{{ path('crianca_registros') }}" data-req=""></span>
+        </div>
+    </div>
     {% for row in criancas %}
-        <div class="row">
+        <div class="row mb-2">
             <div class="col-3">
-                <img src="{{ vich_uploader_asset(row, 'foto') }}" alt="" class="border-circle" style="height: inherit;">
+                <img src="{%- if row.nomeFoto|length == 5 -%}
+                    /static/{{ row.nomeFoto }}
+                {%- else -%}
+                    {{ vich_uploader_asset(row, 'foto') }}
+                {% endif %}" alt="{{ row.id }}" class="border-circle" style="height: 80px;">
             </div>
             <div class="col">
                 <p>{{ row.nome }}</p>
-                <p>{{ row.dn }}</p>
+                <p>{{ row.dn|date("d/m/Y") }}</p>
             </div>
-            <div class="col-2">
-                <a href="{{ path('crianca_registros') }}" class="btn btn-primary">Registros</a>
-                <a href="#" class="btn btn-primary">Requerir</a>
+            <div class="col-2" data-crianca="{{ row.id }}">
+                <button type="button" class="btn btn-primary acoes-crianca">Registros</button>
+                <button type="button" class="btn btn-primary acoes-crianca">Requerir</button>
             </div>
         </div>
     {% endfor %}
+
+    <div class="row mt-3">
+        <div class="col">
+            <a href="{{ path('crianca_novo') }}" class="btn btn-primary">Incluir</a>
+        </div>
+    </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('index_crianca') }}
+{% endblock javascripts %}
