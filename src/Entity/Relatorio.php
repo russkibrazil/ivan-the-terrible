@@ -129,7 +129,7 @@ class Relatorio
         return $this;
     }
 
-    public function getNomeArquivo() : string
+    public function getNomeArquivo() : ?string
     {
         return $this->nomeArquivo;
     }

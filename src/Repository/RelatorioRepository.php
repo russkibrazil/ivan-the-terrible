@@ -43,13 +43,13 @@ class RelatorioRepository extends ServiceEntityRepository
             ->createQuery('
                 SELECT r
                 FROM App\Entity\Relatorio r
-                WHERE r.dInicial BETWEEN :dimin AND :dimax AND r.dFinal BETWEEN :dfmin AND :dfmax
+                WHERE r.dInicio BETWEEN :dimin AND :dimax AND r.dFim BETWEEN :dfmin AND :dfmax
             ')
             ->setParameters([
-                'dimin' => strftime('%Y-%m-%d %H:%M:%S', $dataInicial->add($intervaloA)->getTimestamp()),
-                'dimax' => strftime('%Y-%m-%d %H:%M:%S', $dataInicial->sub($intervaloS)->getTimestamp()),
-                'dfmin' => strftime('%Y-%m-%d %H:%M:%S', $dataFinal->add($intervaloA)->getTimestamp()),
-                'dfmax' => strftime('%Y-%m-%d %H:%M:%S', $dataFinal->sub($intervaloS)->getTimestamp()),
+                'dimax' => strftime('%Y-%m-%d', $dataInicial->add($intervaloA)->getTimestamp()),
+                'dimin' => strftime('%Y-%m-%d', $dataInicial->sub($intervaloS)->getTimestamp()),
+                'dfmax' => strftime('%Y-%m-%d', $dataFinal->add($intervaloA)->getTimestamp()),
+                'dfmin' => strftime('%Y-%m-%d', $dataFinal->sub($intervaloS)->getTimestamp()),
             ]);
 
         return $q->getResult();
