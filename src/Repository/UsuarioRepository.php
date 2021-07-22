@@ -132,9 +132,9 @@ class UsuarioRepository extends ServiceEntityRepository
         $auths = $this->_em->createQuery('
             SELECT r
             FROM \App\Entity\Relatorio r
-            WHERE (SELECT JSON_SEARCH(r.autorizado,"one", :nome) IS NOT NULL
+            WHERE JSON_SEARCH(r.autorizado,"one", :email) IS NOT NULL
         ')
-        ->setParameter('nome', $usuario->getNome())
+        ->setParameter('email', $usuario->getEmail())
         ->getResult();
 
         /**
