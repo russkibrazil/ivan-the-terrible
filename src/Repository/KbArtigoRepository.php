@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\KbArtigo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -74,26 +75,12 @@ class KbArtigoRepository extends ServiceEntityRepository
         }
 
         $resultados = [];
+        $rsm = new ResultSetMappingBuilder($this->_em);
+        $rsm->addRootEntityFromClassMetadata('App\Entity\KbArtigo', 't');
         foreach ($arr_palavras as $palavra) {
-            dump($palavra);
-            // $q = $this->_em->createQuery('
-            //     SELECT c
-            //     FROM \App\Entity\KbArtigo c
-            //     WHERE (SELECT JSON_CONTAINS(cc.tags, :palavra) FROM \App\Entity\KbArtigo cc WHERE cc.id = c.id) = 1
-            //     '
-            // )
-            //     ->setParameter('palavra', '"' . $palavra . '"')
-            //     ->setMaxResults(15)
-            // ;
-            $q = $this->_em->createQuery('
-                SELECT c
-                FROM \App\Entity\KbArtigo c
-                WHERE (SELECT JSON_SEARCH(c.tags,"one", :palavra) FROM \App\Entity\KbArtigo cc WHERE cc.id = c.id) IS NOT NULL
-                '
-            )
-                ->setParameter('palavra', $palavra . '%')
-                ->setMaxResults(15)
-            ;
+            $sql = 'SELECT * FROM kb_artigo t WHERE (SELECT JSON_SEARCH(t.tags,"one", "' . $palavra . '%") FROM kb_artigo tt WHERE tt.id = t.id) IS NOT NULL LIMIT 15';
+            $q = $this->_em->createNativeQuery($sql, $rsm);
+            // https://www.doctrine-project.org/projects/doctrine-orm/en/2.9/reference/native-sql.html
             $resultados = array_merge($resultados, $q->getResult());
 
         }
