@@ -1,0 +1,19 @@
+<div class="w-50 mx-auto text-center">
+    {% for message in app.flashes('sucesso') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <p class="text-center">{{ message }}</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('erro') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <p class="text-center">{{ message }}</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+</div>
