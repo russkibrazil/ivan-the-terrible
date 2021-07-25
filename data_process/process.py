@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from os import getcwd
 import pandas
 import numpy
 import matplotlib.pyplot as mpl
@@ -7,16 +7,16 @@ import nltk
 import argparse
 
 def estimador_amamentacao_AMEX(dhInicio, dhFim, idade) -> float:
-    x = dhInicio.date() - date.fromisoformat(idade)
+    x = dhInicio.date() - idade
     z = dhFim - dhInicio
     return 591 - 0.7*x.days + 0.76*z.seconds*60
 
 def estimador_amamentacao_AMEC(kcalorias, idade, dh) -> float:
-    x = dh - date.fromisoformat(idade)
+    x = dh - idade
     return 755-0.48*x.days-0.59*kcalorias
 
 def estimador_amamentacao_nMamadas(nMamadas, idade, dh) -> float:
-    x = dh - date.fromisoformat(idade)
+    x = dh - idade
     return 489-0.63*x.days+13.45*nMamadas
 
 def switch_tipo_liquido(tipo : str) -> str:
@@ -30,65 +30,64 @@ def switch_tipo_liquido(tipo : str) -> str:
     }
     return switcher.get(tipo)
 
-def nome_arquivo_exportacao(tipo : str, extensao : str) -> str:
-    return './export/{id}-{di}-{df}-{tipo}.{extensao}'.format(id=args.crianca, di=args.dhInicio, df=args.dhFim, tipo=tipo, extensao=extensao)
-
-nltk.download('punkt')
+def nome_arquivo_exportacao(tipo : str, extensao : str, args : dict) -> str:
+    return '{prefix}/data_process/export/{id}-{di}-{df}-{tipo}.{extensao}'.format(prefix=getcwd(), id=args.get('crianca'), di=args.get('dataInicio'), df=args.get('dataFim'), tipo=tipo, extensao=extensao)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("crianca", type=int)
-parser.add_argument("dhInicio", type=str)
-parser.add_argument("dhFim", type=str)
+parser.add_argument("dInicio", type=str)
+parser.add_argument("dFim", type=str)
 args = parser.parse_args()
 
-dados = {'crianca': args.crianca,
-    "dataInicio": args.dhInicio,
-    "dataFim": args.dhFim
+i_arg = {'crianca': args.crianca,
+    "dataInicio": args.dInicio,
+    "dataFim": args.dFim
     }
 
-conx = mysql.connector.connect(host='127.0.0.1', port='3306', user=user, password=pw, database=db)
+# TODO Implementar leitura de arquivo de configuração para obter dados do BD
+conx = mysql.connector.connect(host='127.0.0.1', port='3306', user='igor', password='gamesjoker', database='itt')
 cursor = conx.cursor(buffered=True)
 query = ("""SELECT *
-            FROM `aimov`.`seioMaterno`
-            WHERE crianca = %(crianca)s AND dhInicio BETWEEN %(dataInicio)s AND %(dataFim)s AND dhFim IS NOT NULL
+            FROM `seio_materno`
+            WHERE crianca_id = %(crianca)s AND dh_inicio BETWEEN %(dataInicio)s AND %(dataFim)s AND dh_fim IS NOT NULL
         """)
-cursor.execute(query, dados)
+cursor.execute(query, i_arg)
 seio = cursor.fetchall()
 columnSeio = cursor.column_names
 nSeio = cursor.rowcount
 
 query = ("""SELECT *
-            FROM `aimov`.`mamadeira`
-            WHERE crianca = %(crianca)s AND dh BETWEEN %(dataInicio)s AND %(dataFim)s
+            FROM `mamadeira`
+            WHERE crianca_id = %(crianca)s AND dh BETWEEN %(dataInicio)s AND %(dataFim)s
         """)
-cursor.execute(query, dados)
+cursor.execute(query, i_arg)
 mamadeira = cursor.fetchall()
 columnMamadeira = cursor.column_names
 nMamadeira = cursor.rowcount
 
 query = ("""SELECT *
-            FROM `aimov`.`refeicaoSolida`
-            WHERE crianca = %(crianca)s AND dh BETWEEN %(dataInicio)s AND %(dataFim)s
+            FROM `refeicao_solida`
+            WHERE crianca_id = %(crianca)s AND dh BETWEEN %(dataInicio)s AND %(dataFim)s
         """)
-cursor.execute(query, dados)
+cursor.execute(query, i_arg)
 solido = cursor.fetchall()
 columnSolido = cursor.column_names
 nSolido = cursor.rowcount
 
 query = ("""SELECT *
-            FROM `aimov`.`crianca`
+            FROM `crianca`
             WHERE id = %(crianca)s
         """)
-cursor.execute(query, {'id': args.crianca})
+cursor.execute(query, {'crianca': args.crianca})
 crianca = cursor.fetchall()
-idadec = crianca[2]
+idadec = crianca[0][2]
 
 dfP = pandas.DataFrame(seio, columns=columnSeio)
 dfM = pandas.DataFrame(mamadeira, columns=columnMamadeira)
 dfS = pandas.DataFrame(solido, columns=columnSolido)
-dfP['dhInicio'] = pandas.to_datetime(dfP['dhInicio'], format='%d-%m-%Y %H:%M:%S')
-dfP['dhFim'] = pandas.to_datetime(dfP['dhFim'], format='%d-%m-%Y %H:%M:%S')
-resLeite = pandas.DataFrame()
+dfP['dh_inicio'] = pandas.to_datetime(dfP['dh_inicio'], format='%d-%m-%Y %H:%M:%S')
+dfP['dh_fim'] = pandas.to_datetime(dfP['dh_fim'], format='%d-%m-%Y %H:%M:%S')
+resLeite = dfM[dfM['alimento'] == 'LEITEM']
 
 if nSeio > 0:
     amex = True
@@ -96,7 +95,6 @@ if nSeio > 0:
     if nSolido > 0:
         amex = False
     elif nMamadeira > 0:
-        resLeite = dfM[dfM['alimento'] == 'LEITEM']
         if len(resLeite) != nMamadeira:
             amex = False
 
@@ -105,10 +103,10 @@ if nSeio > 0:
         estimativa_diaria = dfP.copy()
         estimativa_diaria.loc[:,'volume'] = 0
         estimativa_diaria.loc[:, 'duracao'] = 0
-        estimativa_diaria['dInicio'] = estimativa_diaria['dhInicio'].dt.date
-        estimativa_diaria['hInicio'] = estimativa_diaria['dhInicio'].dt.time
-        estimativa_diaria['dFim'] = estimativa_diaria['dhFim'].dt.date
-        estimativa_diaria['hFim'] = estimativa_diaria['dhFim'].dt.time
+        estimativa_diaria['dInicio'] = estimativa_diaria['dh_inicio'].dt.date
+        estimativa_diaria['hInicio'] = estimativa_diaria['dh_inicio'].dt.time
+        estimativa_diaria['dFim'] = estimativa_diaria['dh_fim'].dt.date
+        estimativa_diaria['hFim'] = estimativa_diaria['dh_fim'].dt.time
 
         #ESTIMATIVA ATRAVÉS DE REGRESSORES
         agrupa_ame = estimativa_diaria.groupby('dInicio')
@@ -118,15 +116,15 @@ if nSeio > 0:
         volumesN = []
         if resLeite.empty:
             for index, valores in estimativa_diaria.iterrows():
-                volumesX.append(estimador_amamentacao_AMEX(valores['dhInicio'], valores['dhFim'], idadec))
-                volumesN.append(estimador_amamentacao_nMamadas(agrupa_ame_conta.loc[valores['dInicio'], 'dhInicio'], idadec, valores['dInicio']))
+                volumesX.append(estimador_amamentacao_AMEX(valores['dh_inicio'], valores['dh_fim'], idadec))
+                volumesN.append(estimador_amamentacao_nMamadas(agrupa_ame_conta.loc[valores['dInicio'], 'dh_inicio'], idadec, valores['dInicio']))
 
             volumes = numpy.array([volumesX, volumesN])
             volumes = numpy.mean(volumes, 0)
             estimativa_diaria['volume'] = pandas.Series(volumes)
 
             #vamos colcoar os volumes estimados para cada sessão
-            agrupa_ame_tempo = estimativa_diaria.apply(lambda x: x['dhFim'] - x['dhInicio'], axis=1)
+            agrupa_ame_tempo = estimativa_diaria.apply(lambda x: x['dh_fim'] - x['dh_inicio'], axis=1)
             agrupa_ame_tempo = agrupa_ame_tempo.apply(lambda x: x.seconds / 60)
             estimativa_diaria['duracao'] = agrupa_ame_tempo
 
@@ -140,7 +138,7 @@ if nSeio > 0:
             leiteMaterno_mesclado = pandas.concat([resLeite, dfP], ignore_index=True)
 
             #se houver registros de LM em mamadeira, organziar as colunas de data e hora, além de obter a quantidade de leite ingerido por mamadeira
-            horarios_leitem = leiteMaterno_mesclado['dhInicio']
+            horarios_leitem = leiteMaterno_mesclado['dh_inicio']
             volume_mamadeira_somado = pandas.Series()
             leiteMaterno_mesclado['dh'].fillna(horarios_leitem, inplace=True)
             leiteMaterno_mesclado['dh'] = pandas.to_datetime(leiteMaterno_mesclado['dh'])
@@ -231,7 +229,7 @@ if nSeio > 0:
         agrupa_ame_soma = agrupa_ame.agg({'volume': 'sum'})
         mpl.figure()
         agrupa_ame_soma.plot(y='volume', kind='bar')
-        mpl.savefig(nome_arquivo_exportacao('leiteMaterno', 'png'))
+        mpl.savefig(nome_arquivo_exportacao('leiteMaterno', 'png', i_arg))
         mpl.draw()
 
         estimativa_diaria['hora'] = pandas.Series(estimativa_diaria['dhInicio'].dt.time, dtype='string')
@@ -240,27 +238,29 @@ if nSeio > 0:
         estimativa_diaria['hora'] = pandas.Series(estimativa_diaria['hora'], dtype='int')
         mpl.figure()
         estimativa_diaria.plot.scatter(x='hora', y='volume', use_index=False)
-        mpl.savefig(nome_arquivo_exportacao('scatterLeiteMaterno', 'png'))
+        mpl.savefig(nome_arquivo_exportacao('scatterLeiteMaterno', 'png', i_arg))
         mpl.draw()
     else:
         leiteMaterno_mesclado = pandas.concat([resLeite, dfP], ignore_index=True)
-
         #se houver registros de LM em mamadeira, organziar as colunas de data e hora, além de obter a quantidade de leite ingerido por mamadeira
         if resLeite.empty == False:
-            horarios_leitem = leiteMaterno_mesclado['dhInicio']
+            horarios_leitem = leiteMaterno_mesclado['dh_inicio']
             volume_mamadeira_somado = pandas.Series()
             leiteMaterno_mesclado['dh'].fillna(horarios_leitem, inplace=True)
             leiteMaterno_mesclado['data'] = leiteMaterno_mesclado['dh'].dt.date
             leiteMaterno_mesclado['hora'] = leiteMaterno_mesclado['dh'].dt.time
             resLeite['data'] = resLeite['dh'].dt.date
             volume_mamadeira_somado = resLeite.groupby('data')['volume'].apply(numpy.sum)
+        else:
+            leiteMaterno_mesclado['data'] = leiteMaterno_mesclado['dh_inicio'].dt.date
+            leiteMaterno_mesclado['hora'] = leiteMaterno_mesclado['dh_inicio'].dt.time
 
         #para cada DF do agrupamento, montar uma list contendo a quantidade de mamadas encontradas
         qtd_mamadas = leiteMaterno_mesclado.groupby('data').count()
 
         #estimando o volume de cada mamada no seio materno
         estimativa_diaria = []
-        for index, valor in qtd_mamadas['dhInicio'].iteritems():
+        for index, valor in qtd_mamadas['dh_inicio'].iteritems():
             estimativa_diaria.append(estimador_amamentacao_nMamadas(valor, idadec, index))
             #AMEC estimator?
 
@@ -275,16 +275,16 @@ if nSeio > 0:
 
             mpl.figure()
             estimativa_diaria.plot(x='data', y='volume', kind='bar', use_index=False)
-            mpl.savefig(nome_arquivo_exportacao('leiteMaterno', 'png'))
+            mpl.savefig(nome_arquivo_exportacao('leiteMaterno', 'png', i_arg))
             mpl.draw()
         else:
             if amex==False:
                 mpl.figure()
                 estimativa_diaria.plot(kind='bar')
-                mpl.savefig(nome_arquivo_exportacao('leiteMaterno', 'png'))
+                mpl.savefig(nome_arquivo_exportacao('leiteMaterno', 'png', i_arg))
                 mpl.draw()
 
-        media_por_mamada_seio = ((estimativa_diaria-volume_mamadeira_somado) / qtd_mamadas['dh']).repeat(qtd_mamadas['dhInicio'].array) #comparar em gráfico de barras empilhadas os dois tipos de leite, invés da barra somatório
+        media_por_mamada_seio = ((estimativa_diaria-volume_mamadeira_somado) / qtd_mamadas['dh']).repeat(qtd_mamadas['dh_inicio'].array) #comparar em gráfico de barras empilhadas os dois tipos de leite, invés da barra somatório
         media_por_mamada_seio.rename('idx', inplace=True)
         media_por_mamada_seio.index = leiteMaterno_mesclado[leiteMaterno_mesclado['volume'].isna()].index
         #plotar: volumes (barras) e scatter (horarios); as mamadeiras em legenda especial no caso do scatter
@@ -296,7 +296,7 @@ if nSeio > 0:
 
         mpl.figure()
         leiteMaterno_mesclado.plot.scatter(x='hora', y='volume', use_index=False)
-        mpl.savefig(nome_arquivo_exportacao('scatterLeiteMaterno', 'png'))
+        mpl.savefig(nome_arquivo_exportacao('scatterLeiteMaterno', 'png', i_arg))
         mpl.draw()
 
 if nMamadeira > 0:
@@ -352,18 +352,21 @@ if nMamadeira > 0:
     ax.legend()
     ax.set_ylabel('Volume, ml')
     ax.set_xlabel('Data')
-    mpl.savefig(nome_arquivo_exportacao('somaMamadeira', 'png'))
     mpl.xticks(numpy.arange(0,len(diferentes_datas)), ticks.dt.date, rotation=90)
+    mpl.savefig(nome_arquivo_exportacao('somaMamadeira', 'png', i_arg))
     mpl.draw()
     #imprimir as tabelas
 
 if nSolido > 0:
-    tesauro = pandas.read_csv('tesauro-alimentos.csv', names=['alimento', 'categoria'], skiprows=1)
+
+    nltk.download('punkt')
+
+    tesauro = pandas.read_csv('{}/data_process/tesauro-alimentos.csv'.format(getcwd()), names=['alimento', 'categoria'], skiprows=1)
     tesauro['alimento'] = tesauro['alimento'].apply(str.lower)
     tesauro['alimento'] = tesauro['alimento'].apply(str.strip)
 
     conteudo_texto = ''
-    for entrada in numpy.nditer(solido['anotacao'].values, flags=['external_loop']):
+    for entrada in dfS['anotacao'].iteritems():
         conteudo_texto = conteudo_texto + ' ' + str(entrada)
 
     fdist = nltk.FreqDist(word.lower() for word in nltk.word_tokenize(conteudo_texto))
@@ -381,4 +384,4 @@ if nSolido > 0:
     _.reset_index(drop=True, inplace=True)
     alimentos_encontrados['categoria'] = _['categoria'] #opcional detalhado
     soma_categoria = alimentos_encontrados.groupby('categoria').agg(numpy.sum)
-    soma_categoria.to_json(nome_arquivo_exportacao('tabelaSolidos', 'json'), 'index')
+    soma_categoria.to_json(nome_arquivo_exportacao('tabelaSolidos', 'json', i_arg), 'index')

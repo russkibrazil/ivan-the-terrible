@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" type="text/css">
+        <link rel="stylesheet" href="{{ css }}" type="text/css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
@@ -11,7 +11,7 @@
                 <div class="col">
                     <h1>Relatório da criança</h1>
                     {{ crianca.nome }}
-                    {{ crianca.dn }}
+                    {{ crianca.dn|date("d/m/Y") }}
                     <br>
                     <p class="fw-bold">Intervalo da análise: {{ dataInicio }} a {{ dataFim }}</p>
                 </div>
@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            {% if amamentacao is not empty %}
+            {% if amamentacao_barras is not empty %}
             <div class="row">
                 <div class="col">
                     <h3>Resumo do consumo de leite materno</h3>
@@ -38,7 +38,7 @@
             </div>
             {% endif %}
 
-            {% if liquidos is not empty %}
+            {% if grafico_liquidos is not empty %}
                 <h3>Resumo do consumo de líquidos e de mamadeiras</h3>
                 <p>Nesta área, estão informados os volumes de líquidos que a criança consumiu e quais líquidos foram esses, separados diariamente.</p>
 
@@ -52,16 +52,16 @@
 
                 <table class="table table-striped">
                     <thead>
-                        <th>
-                            <td>Tipo</td>
-                            <td>Frequência</td>
-                        </th>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Frequência</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        {% for row in solidos %}
+                        {% for key, row in solidos %}
                             <tr>
-                                <td>{{ row.tipo }}</td>
-                                <td>{{ row.valor }}</td>
+                                <td>{{ key }}</td>
+                                <td>{{ row.frequencia }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -167,6 +167,6 @@ class RelatorioController extends AbstractController
         $mgr = $this->getDoctrine()->getManager();
         $mgr->persist($rel);
         $mgr->flush();
-        $this->dispatchMessage(new DadosAlimentacaoMessage($crianca->getId(), $inicio, $fim, []));
+        $this->dispatchMessage(new DadosAlimentacaoMessage($crianca->getId(), $inicio->format('Y-m-d'), $fim->format('Y-m-d'), []));
     }
 }

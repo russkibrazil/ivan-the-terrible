@@ -2,10 +2,11 @@ knp_snappy:
     pdf:
         enabled:    true
         binary:     '%env(WKHTMLTOPDF_PATH)%'
-        options:    [
-            enable-local-file-access
-        ]
+        options:
+            enable-local-file-access: true
+
+    #see: https://github.com/symfony/symfony/issues/30059 (Remove unused env vars exception)
     image:
-        enabled:    true #see: https://github.com/symfony/symfony/issues/30059 (Remove unused env vars exception)
+        enabled:    true
         binary:     '%env(WKHTMLTOIMAGE_PATH)%'
         options:    []

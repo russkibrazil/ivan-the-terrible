@@ -94,7 +94,7 @@
                 <tbody>
                     {% for row in relatorios %}
                         <tr>
-                            <td><a href="{{ vich_uploader_asset(row, 'arquivo') }}"><i class="ri-file-pdf-line"></i></a></td>
+                            <td><a href="{{ vich_uploader_asset(row, 'arquivo') }}" target="_blank"><i class="ri-file-pdf-line"></i></a></td>
                             <td>{{ row.dh|date("d/m/Y") }}</td>
                             <td>{{ row.dInicio|date("d/m/Y") }} - {{ row.dFim|date("d/m/Y") }}</td>
                         </tr>

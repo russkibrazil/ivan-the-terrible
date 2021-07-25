@@ -9,7 +9,7 @@ final class DadosAlimentacaoMessage
     private $dataFim;
     private $autorizados;
 
-    public function __construct(int $crianca, $dataInicio, $dataFim, array $autorizados = [])
+    public function __construct(int $crianca, string $dataInicio, string $dataFim, array $autorizados = [])
     {
         $this->crianca = $crianca;
         $this->dataInicio = $dataInicio;
