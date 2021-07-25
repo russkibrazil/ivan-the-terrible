@@ -3,8 +3,13 @@
 {% block title %}Selecionar data{{ razao|default(' para pesquisa') }}{% endblock title %}
 
 {% block body %}
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Selecione a data</h1>
+        </div>
+    </div>
     {{ form_start(form) }}
-        <div class="row">
+        <div class="row mb-2">
             <div class="col">
                 <div class="form-floating mb-3">
                     {{ form_widget(form.dInicio, {'attr': {'placeholder': form.dInicio.vars.label}}) }}
