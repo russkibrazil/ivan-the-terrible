@@ -1,4 +1,5 @@
 from os import getcwd
+import re
 import pandas
 import numpy
 import matplotlib.pyplot as mpl
@@ -33,6 +34,27 @@ def switch_tipo_liquido(tipo : str) -> str:
 def nome_arquivo_exportacao(tipo : str, extensao : str, args : dict) -> str:
     return '{prefix}/data_process/export/{id}-{di}-{df}-{tipo}.{extensao}'.format(prefix=getcwd(), id=args.get('crianca'), di=args.get('dataInicio'), df=args.get('dataFim'), tipo=tipo, extensao=extensao)
 
+def obter_dados_mysql() -> dict:
+    try:
+        conf = open('{}/.env.local.php'.format(getcwd()))
+    except FileNotFoundError:
+        try:
+            conf = open('{}/.env'.format(getcwd()))
+        except FileNotFoundError:
+            return {}
+    continuar = True
+    while continuar:
+        l = conf.readline()
+        if l == '':
+            conf.close()
+            return {}
+        _ = re.search(r'DATABASE_URL', l)
+        if _ != None:
+            res = re.search(r'//(?P<user>\w+):(?P<password>\w+)@(?P<host>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(?P<port>\d{2,5})/(?P<database>\w+)',l)
+            continuar = False
+    conf.close()
+    return res.groupdict()
+
 parser = argparse.ArgumentParser()
 parser.add_argument("crianca", type=int)
 parser.add_argument("dInicio", type=str)
@@ -44,8 +66,8 @@ i_arg = {'crianca': args.crianca,
     "dataFim": args.dFim
     }
 
-# TODO Implementar leitura de arquivo de configuração para obter dados do BD
-conx = mysql.connector.connect(host='127.0.0.1', port='3306', user='igor', password='gamesjoker', database='itt')
+bd = obter_dados_mysql()
+conx = mysql.connector.connect(host=bd.get('host'), port=bd.get('port'), user=bd.get('user'), password=bd.get('password'), database=bd.get('database'))
 cursor = conx.cursor(buffered=True)
 query = ("""SELECT *
             FROM `seio_materno`
