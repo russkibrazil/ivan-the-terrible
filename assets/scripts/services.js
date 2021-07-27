@@ -110,6 +110,7 @@ function ativarCrianca(e) {
 
         document.cookie = craUpdatedCookie;
         document.cookie = crUpdatedCookie;
+        location.reload();
     }
 }
 
