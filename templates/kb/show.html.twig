@@ -3,6 +3,20 @@
 {% block title %}{{ titulo }}{% endblock title %}
 
 {% block body %}
- {# TODO Incluir botão de voltar #}
-    {{- conteudo|markdown_to_html -}}
+<div class="row">
+    <div class="col">
+        <button class="btn btn-primary" id="back" type="button"><i class="ri-arrow-go-back-line ri-xl"></i></button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        {{- conteudo|markdown_to_html -}}
+    </div>
+</div>
 {% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('kb_show') }}
+{% endblock javascripts %}
