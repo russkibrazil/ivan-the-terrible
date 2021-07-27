@@ -13,7 +13,7 @@ const drop_item = `<li>
     <img src="" alt="" class="rounded-circle" style="height: 32px;">
 </button>
 </li>`;
-const btngroup_item = `<button type="button" class="btn btn-outline-primary imagem-crianca-recente"><img src="" alt="" class="rounded-circle" style="height: 32px;"></button>`;
+const btngroup_item = `<button type="button" class="btn btn-outline-primary bg-white imagem-crianca-recente"><img src="" alt="" class="rounded-circle" style="height: 32px;"></button>`;
 
 $(() => {
     if ($('button.imagem-crianca-ativa').length > 0) {
@@ -92,7 +92,7 @@ function ativarCrianca(e) {
     document.cookie = craUpdatedCookie;
     document.cookie = crUpdatedCookie;
 
-    // FIXME: Se a criança for alterada na página crianca/registros, atualizar a página
+    location.reload();
 }
 
 function novoElementoPerfil(tipo, dados) {
